@@ -98,7 +98,7 @@ for i, char in ipairs(textParts) do
         local letter = Instance.new("TextLabel")
         letter.Name = "Letter" .. i
         letter.Size = UDim2.new(0, 40, 1, 0)
-        letter.Position = UDim2.new(0, (i-1) * spacing - 500, 0, 0)
+        letter.Position = UDim2.new(0, (i-1) * spacing - 500, 0, 0) -- Bắt đầu từ ngoài màn hình bên trái
         letter.BackgroundTransparency = 1
         letter.Text = char
         letter.TextSize = 35
@@ -132,7 +132,7 @@ for i, char in ipairs(textParts) do
         local dash = Instance.new("Frame")
         dash.Name = "Dash" .. i
         dash.Size = UDim2.new(0, 28, 0, 5)
-        dash.Position = UDim2.new(0, (i-1) * spacing + 6 - 500, 0.5, -2.5)
+        dash.Position = UDim2.new(0, (i-1) * spacing + 6 - 500, 0.5, -2.5) -- Bắt đầu từ ngoài màn hình bên trái
         dash.BorderSizePixel = 0
         dash.BackgroundTransparency = 1
         dash.Parent = textContainer
@@ -323,27 +323,78 @@ local function startLoadingSequence()
         wait(0.05)
     end
 end
--- HÀM ẨN LOADING SCREEN
+-- HIỆU ỨNG BIẾN MẤT CHỮ (DISAPPEAR ANIMATION)
+local function disappearTextAnimation()
+    -- Animation chữ biến mất từ phải qua trái
+    for i = #letters, 1, -1 do
+        local letterData = letters[i]
+        local letter = letterData.element
+        local letterType = letterData.type
+        
+        -- Slide từ phải ra ngoài màn hình bên phải với hiệu ứng
+        local disappearInfo = TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        local disappearProperties = {}
+        
+        if letterType == "letter" then
+            disappearProperties = {
+                Position = UDim2.new(0, 800, 0, 0), -- Ra ngoài màn hình bên phải
+                TextTransparency = 1,
+                Rotation = 45
+            }
+        else -- dash
+            disappearProperties = {
+                Position = UDim2.new(0, 800, 0.5, -2.5), -- Ra ngoài màn hình bên phải
+                BackgroundTransparency = 1
+            }
+        end
+        
+        local disappearTween = TweenService:Create(letter, disappearInfo, disappearProperties)
+        disappearTween:Play()
+        
+        wait(0.08) -- Delay nhỏ giữa các chữ
+    end
+end
+-- HIỆU ỨNG BIẾN MẤT LOGO
+local function disappearLogoAnimation()
+    local logoDisappearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local logoDisappearTween = TweenService:Create(cloudLogo, logoDisappearInfo, {
+        Size = UDim2.new(0, 0, 0, 0),
+        Rotation = 90,
+        ImageTransparency = 1
+    })
+    logoDisappearTween:Play()
+    
+    -- Biến mất logo glow
+    local glowDisappearTween = TweenService:Create(logoGlow, logoDisappearInfo, {
+        ImageTransparency = 1,
+        Size = UDim2.new(0, 0, 0, 0)
+    })
+    glowDisappearTween:Play()
+end
+-- HÀM ẨN LOADING SCREEN HOÀN CHỈNH
 local function hideLoadingScreen()
+    -- Bước 1: Biến mất chữ
+    disappearTextAnimation()
+    wait(1.5) -- Chờ chữ biến mất hoàn toàn
+    
+    -- Bước 2: Biến mất logo
+    disappearLogoAnimation()
+    wait(1) -- Chờ logo biến mất
+    
+    -- Bước 3: Fade toàn bộ screen
     local fadeInfo = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    local fadeTween = TweenService:Create(screenGui, fadeInfo, {
+    local fadeTween = TweenService:Create(backgroundFrame, fadeInfo, {
         BackgroundTransparency = 1
     })
+    fadeTween:Play()
     
-    -- Fade tất cả elements
-    for _, child in pairs(screenGui:GetChildren()) do
-        if child:IsA("GuiObject") then
-            if child:IsA("TextLabel") then
-                TweenService:Create(child, fadeInfo, {TextTransparency = 1}):Play()
-            elseif child:IsA("ImageLabel") then
-                TweenService:Create(child, fadeInfo, {ImageTransparency = 1}):Play()
-            else
-                TweenService:Create(child, fadeInfo, {BackgroundTransparency = 1}):Play()
-            end
+    -- Fade particles
+    for _, particle in ipairs(particles) do
+        if particle and particle.Parent then
+            TweenService:Create(particle, fadeInfo, {BackgroundTransparency = 1}):Play()
         end
     end
     
-    fadeTween:Play()
     fadeTween.Completed:Connect(function()
         screenGui:Destroy()
     end)
@@ -354,4 +405,4 @@ task.spawn(function()
     wait(5) -- Chờ 5 giây
     hideLoadingScreen()
 end)
-print("Sky-Base-Maker Loading Animation đã được khởi tạo với nền gradient 5 màu!")
+print("Sky-Base-Maker Loading Animation đã được khởi tạo với nền gradient 5 màu và đầy đủ animation!")
