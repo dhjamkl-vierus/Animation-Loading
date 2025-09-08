@@ -1,0 +1,275 @@
+-- Sky-Base-Maker Loading Animation Script for Roblox
+-- Sử dụng local, if, then như yêu cầu
+
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Tạo ScreenGui chính
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SkyBaseLoadingGui"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Background Frame với gradient sky
+local backgroundFrame = Instance.new("Frame")
+backgroundFrame.Name = "Background"
+backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
+backgroundFrame.BorderSizePixel = 0
+backgroundFrame.Parent = screenGui
+
+-- Tạo gradient background sky rực rỡ
+local backgroundGradient = Instance.new("UIGradient")
+backgroundGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 25, 112)),    -- Midnight Blue
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(70, 130, 180)), -- Steel Blue  
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(135, 206, 250)), -- Light Sky Blue
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 182, 193))   -- Light Pink
+}
+backgroundGradient.Rotation = 45
+backgroundGradient.Parent = backgroundFrame
+
+-- Frame chứa các hiệu ứng hạt
+local particleFrame = Instance.new("Frame")
+particleFrame.Name = "ParticleContainer"
+particleFrame.Size = UDim2.new(1, 0, 1, 0)
+particleFrame.Position = UDim2.new(0, 0, 0, 0)
+particleFrame.BackgroundTransparency = 1
+particleFrame.Parent = screenGui
+
+-- Frame trung tâm chứa logo và text
+local centerFrame = Instance.new("Frame")
+centerFrame.Name = "CenterContent"
+centerFrame.Size = UDim2.new(0, 400, 0, 300)
+centerFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+centerFrame.BackgroundTransparency = 1
+centerFrame.Parent = screenGui
+
+-- Tạo logo đám mây
+local cloudLogo = Instance.new("Frame")
+cloudLogo.Name = "CloudLogo"
+cloudLogo.Size = UDim2.new(0, 120, 0, 80)
+cloudLogo.Position = UDim2.new(0.5, -60, 0, 20)
+cloudLogo.BackgroundTransparency = 1
+cloudLogo.Parent = centerFrame
+
+-- Tạo các phần của đám mây bằng ImageLabel với shape tròn
+local function createCloudPart(size, position, color)
+    local part = Instance.new("Frame")
+    part.Size = size
+    part.Position = position
+    part.BackgroundColor3 = color
+    part.BorderSizePixel = 0
+    part.Parent = cloudLogo
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.5, 0)
+    corner.Parent = part
+    
+    -- Hiệu ứng sáng cho logo
+    local glow = Instance.new("Frame")
+    glow.Size = UDim2.new(1.2, 0, 1.2, 0)
+    glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    glow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    glow.BackgroundTransparency = 0.8
+    glow.BorderSizePixel = 0
+    glow.ZIndex = part.ZIndex - 1
+    glow.Parent = part
+    
+    local glowCorner = Instance.new("UICorner")
+    glowCorner.CornerRadius = UDim.new(0.5, 0)
+    glowCorner.Parent = glow
+    
+    return part
+end
+
+-- Tạo các phần đám mây
+local cloud1 = createCloudPart(UDim2.new(0, 40, 0, 40), UDim2.new(0, 10, 0, 25), Color3.fromRGB(255, 255, 255))
+local cloud2 = createCloudPart(UDim2.new(0, 50, 0, 35), UDim2.new(0, 35, 0, 15), Color3.fromRGB(240, 248, 255))
+local cloud3 = createCloudPart(UDim2.new(0, 45, 0, 40), UDim2.new(0, 65, 0, 20), Color3.fromRGB(255, 255, 255))
+local cloud4 = createCloudPart(UDim2.new(0, 35, 0, 30), UDim2.new(0, 25, 0, 40), Color3.fromRGB(248, 248, 255))
+
+-- Text label chính
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleText" 
+titleLabel.Size = UDim2.new(1, 0, 0, 60)
+titleLabel.Position = UDim2.new(0, 0, 0, 120)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "SKY-BASE-MAKER"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 30
+titleLabel.TextScaled = true
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Parent = centerFrame
+
+-- Text stroke cho hiệu ứng đẹp hơn
+local textStroke = Instance.new("UIStroke")
+textStroke.Color = Color3.fromRGB(70, 130, 180)
+textStroke.Thickness = 2
+textStroke.Parent = titleLabel
+
+-- Loading dots
+local loadingLabel = Instance.new("TextLabel")
+loadingLabel.Name = "LoadingText"
+loadingLabel.Size = UDim2.new(1, 0, 0, 30)
+loadingLabel.Position = UDim2.new(0, 0, 0, 190)
+loadingLabel.BackgroundTransparency = 1
+loadingLabel.Text = "Loading"
+loadingLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+loadingLabel.TextSize = 16
+loadingLabel.Font = Enum.Font.Gotham
+loadingLabel.Parent = centerFrame
+
+-- Tạo hệ thống hạt hiệu ứng
+local particles = {}
+local particleCount = 50
+
+local function createParticle()
+    local particle = Instance.new("Frame")
+    particle.Size = UDim2.new(0, math.random(2, 6), 0, math.random(2, 6))
+    particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
+    particle.BackgroundColor3 = Color3.fromRGB(
+        math.random(200, 255),
+        math.random(200, 255), 
+        math.random(240, 255)
+    )
+    particle.BorderSizePixel = 0
+    particle.Parent = particleFrame
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.5, 0)
+    corner.Parent = particle
+    
+    return particle
+end
+
+-- Tạo các hạt
+if particleCount > 0 then
+    for i = 1, particleCount do
+        local particle = createParticle()
+        table.insert(particles, particle)
+    end
+end
+
+-- Animation functions
+local function animateCloudLogo()
+    local rotateInfo = TweenInfo.new(4, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local rotateTween = TweenService:Create(cloudLogo, rotateInfo, {Rotation = 360})
+    rotateTween:Play()
+    
+    -- Hiệu ứng scale nhẹ
+    local scaleInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+    local scaleTween = TweenService:Create(cloudLogo, scaleInfo, {Size = UDim2.new(0, 140, 0, 90)})
+    scaleTween:Play()
+end
+
+local function animateTitle()
+    local fadeInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+    local fadeTween = TweenService:Create(titleLabel, fadeInfo, {TextTransparency = 0.3})
+    fadeTween:Play()
+end
+
+local function animateLoadingText()
+    local loadingDots = 0
+    local connection = nil
+    
+    connection = RunService.Heartbeat:Connect(function()
+        if connection then
+            loadingDots = loadingDots + 1
+            if loadingDots > 180 then -- Reset every 3 seconds (60fps * 3)
+                loadingDots = 0
+            end
+            
+            local dotCount = math.floor(loadingDots / 60) % 4
+            local dots = string.rep(".", dotCount)
+            loadingLabel.Text = "Loading" .. dots
+        end
+    end)
+    
+    return connection
+end
+
+local function animateParticles()
+    if #particles > 0 then
+        for i, particle in ipairs(particles) do
+            if particle and particle.Parent then
+                local moveInfo = TweenInfo.new(
+                    math.random(8, 15), 
+                    Enum.EasingStyle.Linear, 
+                    Enum.EasingDirection.InOut, 
+                    -1
+                )
+                
+                local newPos = UDim2.new(
+                    math.random(), 0,
+                    math.random(), 0
+                )
+                
+                local moveTween = TweenService:Create(particle, moveInfo, {Position = newPos})
+                moveTween:Play()
+                
+                -- Hiệu ứng fade
+                local fadeInfo = TweenInfo.new(
+                    math.random(3, 6),
+                    Enum.EasingStyle.Sine,
+                    Enum.EasingDirection.InOut,
+                    -1, true
+                )
+                local fadeTween = TweenService:Create(particle, fadeInfo, {BackgroundTransparency = 0.7})
+                fadeTween:Play()
+            end
+        end
+    end
+end
+
+-- Khởi động animations
+local loadingConnection = nil
+
+local function startLoadingAnimation()
+    if centerFrame and cloudLogo and titleLabel then
+        animateCloudLogo()
+        animateTitle()
+        loadingConnection = animateLoadingText()
+        animateParticles()
+    end
+end
+
+-- Function để tắt loading screen
+local function hideLoadingScreen(duration)
+    local hideInfo = TweenInfo.new(duration or 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local hideTween = TweenService:Create(screenGui, hideInfo, {
+        Enabled = false
+    })
+    
+    hideTween:Play()
+    
+    hideTween.Completed:Connect(function()
+        if loadingConnection then
+            loadingConnection:Disconnect()
+            loadingConnection = nil
+        end
+        if screenGui and screenGui.Parent then
+            screenGui:Destroy()
+        end
+    end)
+end
+
+-- Bắt đầu animation
+startLoadingAnimation()
+
+-- Auto hide sau 10 giây (có thể tùy chỉnh)
+local autoHideTime = 10
+if autoHideTime > 0 then
+    wait(autoHideTime)
+    hideLoadingScreen(2)
+end
+
+-- Export function để có thể gọi từ script khác
+_G.hideLoadingScreen = hideLoadingScreen
+
+print("Sky-Base-Maker Loading Animation đã được khởi tạo!")
