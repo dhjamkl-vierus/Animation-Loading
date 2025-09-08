@@ -1,82 +1,161 @@
--- 🛠️ Service
+-- Sky-Base-Maker Loading Animation Script for Roblox
+-- Phong cách MOONDIETY ✨ với hiệu ứng nền xuyên suốt 0.3 + logo + text animation
+
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
--- 🎯 Tạo ScreenGui
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- GUI container
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "CustomUI"
-screenGui.IgnoreGuiInset = true
+screenGui.Name = "SkyBaseLoadingGui"
+screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 🎨 NỀN CHÍNH (Gradient động)
-local backgroundFrame = Instance.new("Frame")
+-- 🌌 Background = logo tile lặp lại xuyên suốt (transparency 0.3)
+local backgroundFrame = Instance.new("ImageLabel")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
-backgroundFrame.BackgroundTransparency = 0
-backgroundFrame.BorderSizePixel = 0
+backgroundFrame.BackgroundTransparency = 1
+backgroundFrame.Image = "rbxassetid://125022786287705" -- ⚡ thay bằng ID logo bạn gửi sau
+backgroundFrame.ImageTransparency = 0.3
+backgroundFrame.ScaleType = Enum.ScaleType.Tile
+backgroundFrame.TileSize = UDim2.new(0, 200, 0, 200)
 backgroundFrame.Parent = screenGui
 
-local backgroundGradient = Instance.new("UIGradient")
-backgroundGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(64, 150, 255)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)),
-    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(255, 20, 147)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 0))
-}
-backgroundGradient.Rotation = 45
-backgroundGradient.Parent = backgroundFrame
+-- Container chính giữa
+local centerFrame = Instance.new("Frame")
+centerFrame.Size = UDim2.new(0, 500, 0, 400)
+centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
+centerFrame.BackgroundTransparency = 1
+centerFrame.Parent = screenGui
 
--- 🔥 LOGO (70x70, center screen)
-local logo = Instance.new("ImageLabel")
-logo.Name = "Logo"
-logo.Size = UDim2.new(0, 70, 0, 70) -- chỉnh về 70x70
-logo.Position = UDim2.new(0.5, -35, 0.4, -35) -- căn giữa
-logo.BackgroundTransparency = 1
-logo.Image = "rbxassetid://<your_logo_id_here>" -- đổi ID logo ở đây
-logo.Parent = screenGui
+-- ☁️ Logo chính 70x70
+local cloudLogo = Instance.new("ImageLabel")
+cloudLogo.Name = "CloudLogo"
+cloudLogo.Size = UDim2.new(0, 70, 0, 70)
+cloudLogo.Position = UDim2.new(0.5, -35, 0, 40)
+cloudLogo.BackgroundTransparency = 1
+cloudLogo.Image = "rbxassetid://125022786287705" -- ⚡ thay bằng ID logo bạn gửi sau
+cloudLogo.ScaleType = Enum.ScaleType.Fit
+cloudLogo.Parent = centerFrame
 
--- ✍️ TEXT LABEL (giữ nguyên hiệu ứng)
-local textLabel = Instance.new("TextLabel")
-textLabel.Name = "CustomText"
-textLabel.Size = UDim2.new(1, 0, 0, 50)
-textLabel.Position = UDim2.new(0, 0, 0.65, 0)
-textLabel.BackgroundTransparency = 1
-textLabel.Text = "Hello Roblox!"
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 32
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.Parent = screenGui
+-- ✍️ Text SKY-BASE-MAKER (chia chữ)
+local textContainer = Instance.new("Frame")
+textContainer.Size = UDim2.new(0, 480, 0, 80)
+textContainer.Position = UDim2.new(0.5, -240, 0, 180)
+textContainer.BackgroundTransparency = 1
+textContainer.Parent = centerFrame
 
--- 🌈 Gradient cho chữ
-local textGradient = Instance.new("UIGradient")
-textGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 0)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 255))
-}
-textGradient.Rotation = 0
-textGradient.Parent = textLabel
+local textParts = {"S","K","Y","-","B","A","S","E","-","M","A","K","E","R"}
+local letters = {}
+local spacing = 34
 
--- ✨ Hiệu ứng Animate
-local function animate()
-    -- Gradient nền xoay vòng
-    local bgTween = TweenService:Create(backgroundGradient, TweenInfo.new(8, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1), {
-        Rotation = backgroundGradient.Rotation + 360
-    })
-    bgTween:Play()
+for i, char in ipairs(textParts) do
+    if char ~= "-" then
+        local letter = Instance.new("TextLabel")
+        letter.Size = UDim2.new(0, 40, 1, 0)
+        letter.Position = UDim2.new(0, (i-1)*spacing - 600, 0, 0) -- xuất hiện từ trái
+        letter.BackgroundTransparency = 1
+        letter.Text = char
+        letter.Font = Enum.Font.LuckiestGuy
+        letter.TextSize = 35
+        letter.TextTransparency = 1
+        letter.Parent = textContainer
 
-    -- Gradient chữ chuyển động
-    local textTween = TweenService:Create(textGradient, TweenInfo.new(4, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1), {
-        Rotation = 360
-    })
-    textTween:Play()
+        -- Gradient màu chữ
+        local letterGradient = Instance.new("UIGradient")
+        letterGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(0.25, Color3.fromRGB(64, 150, 255)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)),
+            ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 20, 147)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 165, 0))
+        }
+        letterGradient.Rotation = 45
+        letterGradient.Parent = letter
 
-    -- Logo glow nhẹ
-    local logoTween = TweenService:Create(logo, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {
-        ImageTransparency = 0.2
-    })
-    logoTween:Play()
+        table.insert(letters, {element = letter, finalPos = (i-1)*spacing})
+    else
+        local dash = Instance.new("Frame")
+        dash.Size = UDim2.new(0, 28, 0, 5)
+        dash.Position = UDim2.new(0, (i-1)*spacing + 6 - 600, 0.5, -2)
+        dash.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+        dash.BorderSizePixel = 0
+        dash.Parent = textContainer
+
+        table.insert(letters, {element = dash, finalPos = (i-1)*spacing + 6})
+    end
 end
 
-animate()
+-- ⚡ Animation sequence
+local function startAnimation()
+    -- Logo xuất hiện
+    cloudLogo.Size = UDim2.new(0, 0, 0, 0)
+    cloudLogo.ImageTransparency = 1
+    TweenService:Create(cloudLogo, TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 70, 0, 70),
+        ImageTransparency = 0
+    }):Play()
+
+    task.wait(1)
+
+    -- Chữ lần lượt bay vào
+    local delayPerLetter = 0.15
+    for i, data in ipairs(letters) do
+        local letter = data.element
+        local tween
+        if letter:IsA("TextLabel") then
+            tween = TweenService:Create(letter, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Position = UDim2.new(0, data.finalPos, 0, 0),
+                TextTransparency = 0
+            })
+        else
+            tween = TweenService:Create(letter, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Position = UDim2.new(0, data.finalPos, 0.5, -2),
+                BackgroundTransparency = 0
+            })
+        end
+        tween:Play()
+        task.wait(delayPerLetter)
+    end
+
+    task.wait(1.5)
+
+    -- Chữ lần lượt biến mất sang phải
+    local disappearDelay = 0.1
+    for i, data in ipairs(letters) do
+        local letter = data.element
+        local tween
+        if letter:IsA("TextLabel") then
+            tween = TweenService:Create(letter, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                Position = UDim2.new(0, data.finalPos + 800, 0, -30),
+                TextTransparency = 1,
+                Size = UDim2.new(0, 20, 1, 0)
+            })
+        else
+            tween = TweenService:Create(letter, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                Position = UDim2.new(0, data.finalPos + 800, 0.5, -2),
+                BackgroundTransparency = 1,
+                Size = UDim2.new(0, 14, 0, 2)
+            })
+        end
+        tween:Play()
+        task.wait(disappearDelay)
+    end
+
+    -- Logo biến mất
+    TweenService:Create(cloudLogo, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        ImageTransparency = 1,
+        Position = cloudLogo.Position + UDim2.new(0, 0, 0, -50)
+    }):Play()
+
+    -- Xoá GUI sau animation
+    task.wait(1)
+    screenGui:Destroy()
+end
+
+startAnimation()
