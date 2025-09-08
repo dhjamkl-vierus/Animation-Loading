@@ -19,8 +19,14 @@ screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 local backgroundFrame = Instance.new("ImageLabel")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
+backgroundFrame.BorderSizePixel = 0
 backgroundFrame.BackgroundTransparency = 1
+backgroundFrame.Image = "rbxassetid://125022786287705" -- Sử dụng ID logo làm nền
 backgroundFrame.ImageTransparency = 0.3 -- Độ trong suốt 0.3
+backgroundFrame.ScaleType = Enum.ScaleType.Tile
+backgroundFrame.TileSize = UDim2.new(0, 200, 0, 200)
+backgroundFrame.Parent = screenGui
 
 -- Gradient overlay cho nền để tạo hiệu ứng đẹp hơn
 local backgroundOverlay = Instance.new("Frame")
