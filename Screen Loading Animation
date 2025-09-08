@@ -15,7 +15,7 @@ screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Background với logo animation làm nền
+-- Background sử dụng hình ảnh logo làm nền với độ trong suốt 0.3
 local backgroundFrame = Instance.new("ImageLabel")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -38,10 +38,11 @@ backgroundOverlay.Parent = backgroundFrame
 
 local backgroundGradient = Instance.new("UIGradient")
 backgroundGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(64, 150, 255)),
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(138, 43, 226)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 20, 147))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(64, 150, 255)), -- Light Blue  
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)), -- Purple
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(255, 20, 147)), -- Pink
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 0))     -- Orange
 }
 backgroundGradient.Rotation = 45
 backgroundGradient.Parent = backgroundOverlay
@@ -54,11 +55,11 @@ centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 centerFrame.BackgroundTransparency = 1
 centerFrame.Parent = screenGui
 
--- LOGO ĐÁM MÂY SỬ DỤNG HÌNH ẢNH
+-- LOGO ĐÁM MÂY KHÔNG CÓ NỀN - KÍCH THƯỚC 70
 local cloudLogo = Instance.new("ImageLabel")
 cloudLogo.Name = "CloudLogo"
-cloudLogo.Size = UDim2.new(0, 200, 0, 130)
-cloudLogo.Position = UDim2.new(0.5, -100, 0, 40)
+cloudLogo.Size = UDim2.new(0, 70, 0, 70)
+cloudLogo.Position = UDim2.new(0.5, -35, 0, 40)
 cloudLogo.BackgroundTransparency = 1
 cloudLogo.Image = "rbxassetid://125022786287705" -- Cloud gradient image từ user
 cloudLogo.ImageColor3 = Color3.fromRGB(255, 255, 255)
@@ -111,7 +112,7 @@ textContainer.Position = UDim2.new(0.5, -240, 0, 180)
 textContainer.BackgroundTransparency = 1
 textContainer.Parent = centerFrame
 
--- Text với phân tách rõ ràng: S K Y - B A S E - M A K E R
+-- Text với hiệu ứng wipe reveal: S K Y - B A S E - M A K E R
 local textParts = {"S", "K", "Y", "-", "B", "A", "S", "E", "-", "M", "A", "K", "E", "R"}
 local letters = {}
 local spacing = 34 -- Khoảng cách giữa các ký tự
@@ -121,13 +122,13 @@ for i, char in ipairs(textParts) do
         local letter = Instance.new("TextLabel")
         letter.Name = "Letter" .. i
         letter.Size = UDim2.new(0, 40, 1, 0)
-        letter.Position = UDim2.new(0, (i-1) * spacing - 500, 0, 0) -- Bắt đầu từ ngoài màn hình bên trái
+        letter.Position = UDim2.new(0, (i-1) * spacing, 0, 0)
         letter.BackgroundTransparency = 1
         letter.Text = char
         letter.TextSize = 35
         letter.TextScaled = true
         letter.Font = Enum.Font.LuckiestGuy -- Sử dụng font LuckiestGuy
-        letter.TextTransparency = 1
+        letter.TextTransparency = 0
         letter.Parent = textContainer
         
         -- Gradient cho từng chữ với màu sắc đẹp hơn
@@ -142,6 +143,9 @@ for i, char in ipairs(textParts) do
         letterGradient.Rotation = 45
         letterGradient.Parent = letter
         
+        -- Thiết lập vị trí ban đầu cho animation xuất hiện từ trái
+        letter.Position = UDim2.new(0, (i-1) * spacing - 500, 0, 0) -- Bắt đầu từ ngoài màn hình bên trái
+        
         -- Glow effect cho chữ
         local textStroke = Instance.new("UIStroke")
         textStroke.Color = Color3.fromRGB(0, 255, 255)
@@ -151,13 +155,13 @@ for i, char in ipairs(textParts) do
         
         table.insert(letters, {element = letter, finalPos = (i-1) * spacing, type = "letter"})
     else
-        -- Tạo dấu gạch ngang với hiệu ứng đẹp hơn
+        -- Tạo dấu gạch ngang với hiệu ứng wipe
         local dash = Instance.new("Frame")
         dash.Name = "Dash" .. i
         dash.Size = UDim2.new(0, 28, 0, 5)
-        dash.Position = UDim2.new(0, (i-1) * spacing + 6 - 500, 0.5, -2.5) -- Bắt đầu từ ngoài màn hình bên trái
+        dash.Position = UDim2.new(0, (i-1) * spacing + 6, 0.5, -2.5)
         dash.BorderSizePixel = 0
-        dash.BackgroundTransparency = 1
+        dash.BackgroundTransparency = 0
         dash.Parent = textContainer
         
         -- Corner radius cho dash
@@ -173,6 +177,9 @@ for i, char in ipairs(textParts) do
         }
         dashGradient.Rotation = 45
         dashGradient.Parent = dash
+        
+        -- Thiết lập vị trí ban đầu cho dash animation từ trái
+        dash.Position = UDim2.new(0, (i-1) * spacing + 6 - 500, 0.5, -2.5) -- Bắt đầu từ ngoài màn hình bên trái
         
         -- Glow effect cho dash
         local dashStroke = Instance.new("UIStroke")
@@ -256,7 +263,7 @@ local function animateLogoGlow()
     local glowTween = TweenService:Create(logoGlow, glowInfo, {
         ImageTransparency = 0.9,
         Size = UDim2.new(1.6, 0, 1.6, 0),
-        Position = UDim2.new(-0.3, 0, -0.3, 0)
+        Position = UDim2.new(-0.45, 0, -0.45, 0)
     })
     glowTween:Play()
     
@@ -303,14 +310,14 @@ local function startLoadingSequence()
     
     wait(1)
     
-    -- Animation chữ từ trái qua phải (1-3.5 giây)
+    -- Animation chữ xuất hiện từ trái qua phải giống animation biến mất (1-3.5 giây)
     local letterDelay = 2.5 / #letters
     for i, letterData in ipairs(letters) do
         local letter = letterData.element
         local finalPos = letterData.finalPos
         local letterType = letterData.type
         
-        -- Slide từ trái qua phải với hiệu ứng đẹp
+        -- Slide từ trái qua phải với hiệu ứng giống animation biến mất
         local slideInfo = TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         local slideProperties = {}
         
