@@ -15,16 +15,27 @@ screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Background với gradient màu từ hình đám mây (cyan to purple)
-local backgroundFrame = Instance.new("Frame")
+-- Background sử dụng hình ảnh logo làm nền với độ trong suốt 0.3
+local backgroundFrame = Instance.new("ImageLabel")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
 backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
 backgroundFrame.BorderSizePixel = 0
-backgroundFrame.BackgroundTransparency = 0.3 -- Độ trong suốt 0.3
+backgroundFrame.BackgroundTransparency = 1
+backgroundFrame.Image = "rbxassetid://125022786287705" -- Sử dụng ID logo làm nền
+backgroundFrame.ImageTransparency = 0.3 -- Độ trong suốt 0.3
+backgroundFrame.ScaleType = Enum.ScaleType.Tile
+backgroundFrame.TileSize = UDim2.new(0, 200, 0, 200)
 backgroundFrame.Parent = screenGui
 
--- Gradient nền giống màu từ hình đám mây
+-- Gradient overlay cho nền để tạo hiệu ứng đẹp hơn
+local backgroundOverlay = Instance.new("Frame")
+backgroundOverlay.Size = UDim2.new(1, 0, 1, 0)
+backgroundOverlay.Position = UDim2.new(0, 0, 0, 0)
+backgroundOverlay.BackgroundTransparency = 0.5
+backgroundOverlay.BorderSizePixel = 0
+backgroundOverlay.Parent = backgroundFrame
+
 local backgroundGradient = Instance.new("UIGradient")
 backgroundGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
@@ -34,7 +45,7 @@ backgroundGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 0))     -- Orange
 }
 backgroundGradient.Rotation = 45
-backgroundGradient.Parent = backgroundFrame
+backgroundGradient.Parent = backgroundOverlay
 
 -- Container chính giữa màn hình
 local centerFrame = Instance.new("Frame")
@@ -44,11 +55,11 @@ centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 centerFrame.BackgroundTransparency = 1
 centerFrame.Parent = screenGui
 
--- LOGO ĐÁM MÂY SỬ DỤNG HÌNH ẢNH
+-- LOGO ĐÁM MÂY KHÔNG CÓ NỀN - KÍCH THƯỚC 70
 local cloudLogo = Instance.new("ImageLabel")
 cloudLogo.Name = "CloudLogo"
-cloudLogo.Size = UDim2.new(0, 200, 0, 130)
-cloudLogo.Position = UDim2.new(0.5, -100, 0, 40)
+cloudLogo.Size = UDim2.new(0, 70, 0, 70)
+cloudLogo.Position = UDim2.new(0.5, -35, 0, 40)
 cloudLogo.BackgroundTransparency = 1
 cloudLogo.Image = "rbxassetid://125022786287705" -- Cloud gradient image từ user
 cloudLogo.ImageColor3 = Color3.fromRGB(255, 255, 255)
@@ -119,7 +130,6 @@ for i, char in ipairs(textParts) do
         letter.Font = Enum.Font.LuckiestGuy -- Sử dụng font LuckiestGuy
         letter.TextTransparency = 0
         letter.Parent = textContainer
-        letter.ClipsDescendants = true -- Quan trọng cho hiệu ứng wipe
         
         -- Gradient cho từng chữ với màu sắc đẹp hơn
         local letterGradient = Instance.new("UIGradient")
@@ -133,16 +143,8 @@ for i, char in ipairs(textParts) do
         letterGradient.Rotation = 45
         letterGradient.Parent = letter
         
-        -- Tạo mask frame để che chữ (hiệu ứng wipe)
-        local maskFrame = Instance.new("Frame")
-        maskFrame.Name = "WipeMask"
-        maskFrame.Size = UDim2.new(1, 0, 1, 0)
-        maskFrame.Position = UDim2.new(0, 0, 0, 0) -- Che hoàn toàn
-        maskFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        maskFrame.BackgroundTransparency = 0
-        maskFrame.BorderSizePixel = 0
-        maskFrame.Parent = letter
-        maskFrame.ZIndex = letter.ZIndex + 1
+        -- Thiết lập vị trí ban đầu cho animation xuất hiện từ trái
+        letter.Position = UDim2.new(0, (i-1) * spacing - 500, 0, 0) -- Bắt đầu từ ngoài màn hình bên trái
         
         -- Glow effect cho chữ
         local textStroke = Instance.new("UIStroke")
@@ -151,7 +153,7 @@ for i, char in ipairs(textParts) do
         textStroke.Transparency = 0.2
         textStroke.Parent = letter
         
-        table.insert(letters, {element = letter, maskFrame = maskFrame, finalPos = (i-1) * spacing, type = "letter"})
+        table.insert(letters, {element = letter, finalPos = (i-1) * spacing, type = "letter"})
     else
         -- Tạo dấu gạch ngang với hiệu ứng wipe
         local dash = Instance.new("Frame")
@@ -161,7 +163,6 @@ for i, char in ipairs(textParts) do
         dash.BorderSizePixel = 0
         dash.BackgroundTransparency = 0
         dash.Parent = textContainer
-        dash.ClipsDescendants = true -- Quan trọng cho hiệu ứng wipe
         
         -- Corner radius cho dash
         local dashCorner = Instance.new("UICorner")
@@ -177,16 +178,8 @@ for i, char in ipairs(textParts) do
         dashGradient.Rotation = 45
         dashGradient.Parent = dash
         
-        -- Tạo mask frame cho dash
-        local dashMask = Instance.new("Frame")
-        dashMask.Name = "WipeMask"
-        dashMask.Size = UDim2.new(1, 0, 1, 0)
-        dashMask.Position = UDim2.new(0, 0, 0, 0)
-        dashMask.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        dashMask.BackgroundTransparency = 0
-        dashMask.BorderSizePixel = 0
-        dashMask.Parent = dash
-        dashMask.ZIndex = dash.ZIndex + 1
+        -- Thiết lập vị trí ban đầu cho dash animation từ trái
+        dash.Position = UDim2.new(0, (i-1) * spacing + 6 - 500, 0.5, -2.5) -- Bắt đầu từ ngoài màn hình bên trái
         
         -- Glow effect cho dash
         local dashStroke = Instance.new("UIStroke")
@@ -195,7 +188,7 @@ for i, char in ipairs(textParts) do
         dashStroke.Transparency = 0.3
         dashStroke.Parent = dash
         
-        table.insert(letters, {element = dash, maskFrame = dashMask, finalPos = (i-1) * spacing + 6, type = "dash"})
+        table.insert(letters, {element = dash, finalPos = (i-1) * spacing + 6, type = "dash"})
     end
 end
 
@@ -270,7 +263,7 @@ local function animateLogoGlow()
     local glowTween = TweenService:Create(logoGlow, glowInfo, {
         ImageTransparency = 0.9,
         Size = UDim2.new(1.6, 0, 1.6, 0),
-        Position = UDim2.new(-0.3, 0, -0.3, 0)
+        Position = UDim2.new(-0.45, 0, -0.45, 0)
     })
     glowTween:Play()
     
@@ -281,19 +274,20 @@ local function animateLogoGlow()
     })
     gradientTween:Play()
     
-    -- Animation gradient cho background - chuyển màu liên tục
-    local bgGradientInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    -- Animation cho nền background
+    local backgroundInfo = TweenInfo.new(15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local backgroundTween = TweenService:Create(backgroundFrame, backgroundInfo, {
+        TileSize = UDim2.new(0, 250, 0, 250),
+        ImageTransparency = 0.2
+    })
+    backgroundTween:Play()
+    
+    -- Animation gradient cho background overlay
+    local bgGradientInfo = TweenInfo.new(8, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
     local bgGradientTween = TweenService:Create(backgroundGradient, bgGradientInfo, {
         Rotation = backgroundGradient.Rotation + 360
     })
     bgGradientTween:Play()
-    
-    -- Animation thay đổi độ trong suốt nền
-    local bgTransparencyInfo = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-    local bgTransparencyTween = TweenService:Create(backgroundFrame, bgTransparencyInfo, {
-        BackgroundTransparency = 0.1
-    })
-    bgTransparencyTween:Play()
 end
 
 -- MAIN ANIMATION SEQUENCE (5 giây)
@@ -316,49 +310,59 @@ local function startLoadingSequence()
     
     wait(1)
     
-    -- Animation chữ với hiệu ứng wipe reveal từ trái qua phải (1-3.5 giây)
+    -- Animation chữ xuất hiện từ trái qua phải giống animation biến mất (1-3.5 giây)
     local letterDelay = 2.5 / #letters
     for i, letterData in ipairs(letters) do
         local letter = letterData.element
-        local maskFrame = letterData.maskFrame
+        local finalPos = letterData.finalPos
         local letterType = letterData.type
         
-        -- Hiệu ứng wipe reveal - mask slide từ trái qua phải để tiết lộ chữ
-        local wipeInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local wipeTween = TweenService:Create(maskFrame, wipeInfo, {
-            Position = UDim2.new(1, 0, 0, 0) -- Mask slide ra ngoài bên phải
-        })
-        wipeTween:Play()
+        -- Slide từ trái qua phải với hiệu ứng giống animation biến mất
+        local slideInfo = TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        local slideProperties = {}
         
-        -- Glow effect khi chữ được tiết lộ
+        if letterType == "letter" then
+            slideProperties = {
+                Position = UDim2.new(0, finalPos, 0, 0),
+                TextTransparency = 0,
+                Rotation = 0
+            }
+        else -- dash
+            slideProperties = {
+                Position = UDim2.new(0, finalPos, 0.5, -2.5),
+                BackgroundTransparency = 0
+            }
+        end
+        
+        local slideTween = TweenService:Create(letter, slideInfo, slideProperties)
+        slideTween:Play()
+        
+        -- Glow effect khi xuất hiện
         local glowEffect = letter:FindFirstChild("UIStroke")
         if glowEffect then
-            wait(0.2)
             local glowInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
             local glowTween = TweenService:Create(glowEffect, glowInfo, {
-                Thickness = glowEffect.Thickness + 3,
-                Transparency = 0,
-                Color = Color3.fromRGB(255, 255, 255)
+                Thickness = glowEffect.Thickness + 2,
+                Transparency = 0
             })
             glowTween:Play()
             
             -- Trở lại bình thường
             wait(0.2)
             local normalGlowTween = TweenService:Create(glowEffect, glowInfo, {
-                Thickness = glowEffect.Thickness - 3,
-                Transparency = 0.2,
-                Color = Color3.fromRGB(0, 255, 255)
+                Thickness = glowEffect.Thickness - 2,
+                Transparency = 0.2
             })
             normalGlowTween:Play()
         end
         
-        -- Floating effect nhẹ sau khi xuất hiện
+        -- Floating effect sau khi xuất hiện
+        wait(0.3)
+        local floatInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
         if letterType == "letter" then
-            wait(0.2)
-            local floatInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
             local floatTween = TweenService:Create(letter, floatInfo, {
-                Position = letter.Position + UDim2.new(0, 0, 0, -6),
-                Rotation = math.random(-3, 3)
+                Position = UDim2.new(0, finalPos, 0, -8),
+                Rotation = math.random(-5, 5)
             })
             floatTween:Play()
         end
