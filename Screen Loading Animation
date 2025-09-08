@@ -28,6 +28,25 @@ backgroundFrame.ScaleType = Enum.ScaleType.Tile
 backgroundFrame.TileSize = UDim2.new(0, 200, 0, 200)
 backgroundFrame.Parent = screenGui
 
+-- Gradient overlay cho nền để tạo hiệu ứng đẹp hơn
+local backgroundOverlay = Instance.new("Frame")
+backgroundOverlay.Size = UDim2.new(1, 0, 1, 0)
+backgroundOverlay.Position = UDim2.new(0, 0, 0, 0)
+backgroundOverlay.BackgroundTransparency = 0.5
+backgroundOverlay.BorderSizePixel = 0
+backgroundOverlay.Parent = backgroundFrame
+
+local backgroundGradient = Instance.new("UIGradient")
+backgroundGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(64, 150, 255)), -- Light Blue  
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)), -- Purple
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(255, 20, 147)), -- Pink
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 0))     -- Orange
+}
+backgroundGradient.Rotation = 45
+backgroundGradient.Parent = backgroundOverlay
+
 -- Container chính giữa màn hình
 local centerFrame = Instance.new("Frame")
 centerFrame.Name = "CenterContent"
