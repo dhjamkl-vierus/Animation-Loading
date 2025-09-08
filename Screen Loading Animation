@@ -1,5 +1,5 @@
 -- Sky-Base-Maker Loading Animation Script for Roblox
--- Sử dụng local, if, then như yêu cầu
+-- Theo phong cách MOONDIETY với tất cả hiệu ứng đẹp
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -15,182 +15,191 @@ screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Background Frame với gradient sky tối
+-- Background tối như MOONDIETY
 local backgroundFrame = Instance.new("Frame")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
 backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
 backgroundFrame.BorderSizePixel = 0
-backgroundFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 15) -- Dark background như trong ảnh
+backgroundFrame.BackgroundColor3 = Color3.fromRGB(8, 12, 20)
 backgroundFrame.Parent = screenGui
 
--- Frame chứa các hiệu ứng hạt
-local particleFrame = Instance.new("Frame")
-particleFrame.Name = "ParticleContainer"
-particleFrame.Size = UDim2.new(1, 0, 1, 0)
-particleFrame.Position = UDim2.new(0, 0, 0, 0)
-particleFrame.BackgroundTransparency = 1
-particleFrame.Parent = screenGui
+-- Gradient background như trong ảnh MOONDIETY
+local backgroundGradient = Instance.new("UIGradient")
+backgroundGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 25, 35)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 12, 20)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 30, 40))
+}
+backgroundGradient.Rotation = 45
+backgroundGradient.Parent = backgroundFrame
 
--- Frame trung tâm chứa logo và text
+-- Container chính giữa màn hình
 local centerFrame = Instance.new("Frame")
 centerFrame.Name = "CenterContent"
-centerFrame.Size = UDim2.new(0, 400, 0, 300)
-centerFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+centerFrame.Size = UDim2.new(0, 500, 0, 400)
+centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 centerFrame.BackgroundTransparency = 1
 centerFrame.Parent = screenGui
 
--- Tạo logo đám mây gradient như trong ảnh
+-- LOGO ĐÁM MÂY GRADIENT
 local cloudLogo = Instance.new("Frame")
 cloudLogo.Name = "CloudLogo"
-cloudLogo.Size = UDim2.new(0, 160, 0, 100)
-cloudLogo.Position = UDim2.new(0.5, -80, 0, 10)
+cloudLogo.Size = UDim2.new(0, 180, 0, 110)
+cloudLogo.Position = UDim2.new(0.5, -90, 0, 50)
 cloudLogo.BackgroundTransparency = 1
 cloudLogo.Parent = centerFrame
 
--- Tạo đám mây chính với gradient cyan -> blue -> purple -> pink
+-- Đám mây chính với gradient đẹp
 local mainCloud = Instance.new("Frame")
-mainCloud.Size = UDim2.new(0, 140, 0, 70)
-mainCloud.Position = UDim2.new(0.5, -70, 0.5, -35)
+mainCloud.Size = UDim2.new(0, 160, 0, 80)
+mainCloud.Position = UDim2.new(0.5, -80, 0.5, -40)
 mainCloud.BorderSizePixel = 0
 mainCloud.Parent = cloudLogo
 
--- UICorner cho đám mây
 local cloudCorner = Instance.new("UICorner")
 cloudCorner.CornerRadius = UDim.new(0.5, 0)
 cloudCorner.Parent = mainCloud
 
--- Gradient giống như trong ảnh
 local cloudGradient = Instance.new("UIGradient")
 cloudGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
-    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(0, 150, 255)),  -- Blue
-    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(150, 100, 255)), -- Purple
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 150))   -- Pink
+    ColorSequenceKeypoint.new(0.25, Color3.fromRGB(64, 224, 255)), -- Light Blue
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)),  -- Blue Violet
+    ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 20, 147)), -- Deep Pink
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 105, 180))    -- Hot Pink
 }
-cloudGradient.Rotation = 45
+cloudGradient.Rotation = 135
 cloudGradient.Parent = mainCloud
 
--- Các đám mây nhỏ bổ sung
-local smallCloud1 = Instance.new("Frame")
-smallCloud1.Size = UDim2.new(0, 50, 0, 35)
-smallCloud1.Position = UDim2.new(0, 20, 0, 10)
-smallCloud1.BorderSizePixel = 0
-smallCloud1.Parent = cloudLogo
+-- Đám mây nhỏ bên trái
+local leftCloud = Instance.new("Frame")
+leftCloud.Size = UDim2.new(0, 60, 0, 45)
+leftCloud.Position = UDim2.new(0, 15, 0, 25)
+leftCloud.BorderSizePixel = 0
+leftCloud.Parent = cloudLogo
 
-local corner1 = Instance.new("UICorner")
-corner1.CornerRadius = UDim.new(0.5, 0)
-corner1.Parent = smallCloud1
+local leftCorner = Instance.new("UICorner")
+leftCorner.CornerRadius = UDim.new(0.5, 0)
+leftCorner.Parent = leftCloud
 
-local grad1 = Instance.new("UIGradient")
-grad1.Color = cloudGradient.Color
-grad1.Rotation = 45
-grad1.Parent = smallCloud1
+local leftGradient = cloudGradient:Clone()
+leftGradient.Parent = leftCloud
 
-local smallCloud2 = Instance.new("Frame")
-smallCloud2.Size = UDim2.new(0, 45, 0, 30)
-smallCloud2.Position = UDim2.new(0, 95, 0, 15)
-smallCloud2.BorderSizePixel = 0
-smallCloud2.Parent = cloudLogo
+-- Đám mây nhỏ bên phải
+local rightCloud = Instance.new("Frame")
+rightCloud.Size = UDim2.new(0, 55, 0, 40)
+rightCloud.Position = UDim2.new(0, 110, 0, 30)
+rightCloud.BorderSizePixel = 0
+rightCloud.Parent = cloudLogo
 
-local corner2 = Instance.new("UICorner")
-corner2.CornerRadius = UDim.new(0.5, 0)
-corner2.Parent = smallCloud2
+local rightCorner = Instance.new("UICorner")
+rightCorner.CornerRadius = UDim.new(0.5, 0)
+rightCorner.Parent = rightCloud
 
-local grad2 = Instance.new("UIGradient")
-grad2.Color = cloudGradient.Color
-grad2.Rotation = 45
-grad2.Parent = smallCloud2
+local rightGradient = cloudGradient:Clone()
+rightGradient.Parent = rightCloud
 
--- Container cho từng chữ cái
+-- Hiệu ứng glow cho logo
+local logoGlow = Instance.new("Frame")
+logoGlow.Size = UDim2.new(1.3, 0, 1.3, 0)
+logoGlow.Position = UDim2.new(-0.15, 0, -0.15, 0)
+logoGlow.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+logoGlow.BackgroundTransparency = 0.7
+logoGlow.BorderSizePixel = 0
+logoGlow.ZIndex = mainCloud.ZIndex - 1
+logoGlow.Parent = cloudLogo
+
+local glowCorner = Instance.new("UICorner")
+glowCorner.CornerRadius = UDim.new(0.5, 0)
+glowCorner.Parent = logoGlow
+
+-- CHỮ VỚI FONT LUCKIESTGUY VÀ HIỆU ỨNG
 local textContainer = Instance.new("Frame")
 textContainer.Name = "TextContainer"
-textContainer.Size = UDim2.new(1, 0, 0, 60)
-textContainer.Position = UDim2.new(0, 0, 0, 130)
+textContainer.Size = UDim2.new(0, 480, 0, 80)
+textContainer.Position = UDim2.new(0.5, -240, 0, 180)
 textContainer.BackgroundTransparency = 1
 textContainer.Parent = centerFrame
 
--- Tạo từng chữ cái riêng biệt
 local text = "SKY-BASE-MAKER"
 local letters = {}
-local letterWidth = 400 / #text
+local spacing = 32 -- Khoảng cách giữa các chữ
 
 for i = 1, #text do
-    local letter = Instance.new("TextLabel")
-    letter.Name = "Letter" .. i
-    letter.Size = UDim2.new(0, letterWidth, 1, 0)
-    letter.Position = UDim2.new(0, (i-1) * letterWidth, 0, 0)
-    letter.BackgroundTransparency = 1
-    letter.Text = string.sub(text, i, i)
-    letter.TextSize = 30
-    letter.TextScaled = true
-    letter.Font = Enum.Font.LuckiestGuy
-    letter.Parent = textContainer
-    
-    -- Gradient cho chữ giống như logo
-    local letterGradient = Instance.new("UIGradient")
-    letterGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 150, 255)), -- Blue-Purple
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 200))   -- Pink
-    }
-    letterGradient.Rotation = 90
-    letterGradient.Parent = letter
-    
-    -- Text stroke cho hiệu ứng đẹp hơn
-    local textStroke = Instance.new("UIStroke")
-    textStroke.Color = Color3.fromRGB(0, 50, 100)
-    textStroke.Thickness = 2
-    textStroke.Parent = letter
-    
-    table.insert(letters, letter)
+    local char = string.sub(text, i, i)
+    if char ~= "-" then
+        local letter = Instance.new("TextLabel")
+        letter.Name = "Letter" .. i
+        letter.Size = UDim2.new(0, 35, 1, 0)
+        letter.Position = UDim2.new(0, (i-1) * spacing, 0, 0)
+        letter.BackgroundTransparency = 1
+        letter.Text = char
+        letter.TextSize = 30
+        letter.TextScaled = true
+        letter.Font = Enum.Font.LuckiestGuy
+        letter.TextTransparency = 1
+        letter.Parent = textContainer
+        
+        -- Gradient cho từng chữ
+        local letterGradient = Instance.new("UIGradient")
+        letterGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(0.3, Color3.fromRGB(138, 43, 226)),
+            ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 20, 147)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 165, 0))
+        }
+        letterGradient.Rotation = 90
+        letterGradient.Parent = letter
+        
+        -- Glow effect cho chữ
+        local textStroke = Instance.new("UIStroke")
+        textStroke.Color = Color3.fromRGB(0, 255, 255)
+        textStroke.Thickness = 3
+        textStroke.Transparency = 0.3
+        textStroke.Parent = letter
+        
+        table.insert(letters, letter)
+    else
+        -- Tạo dấu gạch ngang
+        local dash = Instance.new("Frame")
+        dash.Name = "Dash" .. i
+        dash.Size = UDim2.new(0, 25, 0, 4)
+        dash.Position = UDim2.new(0, (i-1) * spacing + 5, 0.5, -2)
+        dash.BorderSizePixel = 0
+        dash.BackgroundTransparency = 1
+        dash.Parent = textContainer
+        
+        local dashGradient = Instance.new("UIGradient")
+        dashGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 20, 147))
+        }
+        dashGradient.Parent = dash
+        
+        table.insert(letters, dash)
+    end
 end
 
--- Loading progress bar
-local progressFrame = Instance.new("Frame")
-progressFrame.Name = "ProgressFrame"
-progressFrame.Size = UDim2.new(0, 200, 0, 4)
-progressFrame.Position = UDim2.new(0.5, -100, 0, 210)
-progressFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-progressFrame.BorderSizePixel = 0
-progressFrame.Parent = centerFrame
+-- HỆ THỐNG HẠT HIỆU ỨNG
+local particleFrame = Instance.new("Frame")
+particleFrame.Name = "ParticleContainer"
+particleFrame.Size = UDim2.new(1, 0, 1, 0)
+particleFrame.BackgroundTransparency = 1
+particleFrame.Parent = screenGui
 
-local progressCorner = Instance.new("UICorner")
-progressCorner.CornerRadius = UDim.new(0, 2)
-progressCorner.Parent = progressFrame
-
-local progressBar = Instance.new("Frame")
-progressBar.Name = "ProgressBar"
-progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.Position = UDim2.new(0, 0, 0, 0)
-progressBar.BorderSizePixel = 0
-progressBar.Parent = progressFrame
-
-local progressGradient = Instance.new("UIGradient")
-progressGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 200))
-}
-progressGradient.Parent = progressBar
-
-local progressBarCorner = Instance.new("UICorner")
-progressBarCorner.CornerRadius = UDim.new(0, 2)
-progressBarCorner.Parent = progressBar
-
--- Tạo hệ thống hạt hiệu ứng
 local particles = {}
-local particleCount = 50
-
 local function createParticle()
     local particle = Instance.new("Frame")
-    particle.Size = UDim2.new(0, math.random(2, 6), 0, math.random(2, 6))
+    particle.Size = UDim2.new(0, math.random(3, 8), 0, math.random(3, 8))
     particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
     particle.BackgroundColor3 = Color3.fromRGB(
-        math.random(200, 255),
-        math.random(200, 255), 
-        math.random(240, 255)
+        math.random(100, 255),
+        math.random(150, 255),
+        255
     )
     particle.BorderSizePixel = 0
+    particle.BackgroundTransparency = math.random(30, 70) / 100
     particle.Parent = particleFrame
     
     local corner = Instance.new("UICorner")
@@ -200,148 +209,152 @@ local function createParticle()
     return particle
 end
 
--- Tạo các hạt
-if particleCount > 0 then
-    for i = 1, particleCount do
-        local particle = createParticle()
-        table.insert(particles, particle)
-    end
+-- Tạo 100 hạt hiệu ứng
+for i = 1, 100 do
+    table.insert(particles, createParticle())
 end
 
--- Animation progress bar
-local function animateProgressBar()
-    local progressInfo = TweenInfo.new(5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-    local progressTween = TweenService:Create(progressBar, progressInfo, {
-        Size = UDim2.new(1, 0, 1, 0)
-    })
-    progressTween:Play()
-end
-
+-- ANIMATION FUNCTIONS
 local function animateParticles()
-    if #particles > 0 then
-        for i, particle in ipairs(particles) do
-            if particle and particle.Parent then
-                local moveInfo = TweenInfo.new(
-                    math.random(8, 15), 
-                    Enum.EasingStyle.Linear, 
-                    Enum.EasingDirection.InOut, 
-                    -1
-                )
-                
-                local newPos = UDim2.new(
-                    math.random(), 0,
-                    math.random(), 0
-                )
-                
-                local moveTween = TweenService:Create(particle, moveInfo, {Position = newPos})
-                moveTween:Play()
-                
-                -- Hiệu ứng fade
-                local fadeInfo = TweenInfo.new(
-                    math.random(3, 6),
-                    Enum.EasingStyle.Sine,
-                    Enum.EasingDirection.InOut,
-                    -1, true
-                )
-                local fadeTween = TweenService:Create(particle, fadeInfo, {BackgroundTransparency = 0.7})
-                fadeTween:Play()
-            end
+    for i, particle in ipairs(particles) do
+        if particle and particle.Parent then
+            local moveInfo = TweenInfo.new(
+                math.random(10, 20),
+                Enum.EasingStyle.Linear,
+                Enum.EasingDirection.InOut,
+                -1
+            )
+            
+            local moveTween = TweenService:Create(particle, moveInfo, {
+                Position = UDim2.new(math.random(), 0, math.random(), 0),
+                Rotation = math.random(-180, 180)
+            })
+            moveTween:Play()
+            
+            -- Hiệu ứng fade
+            local fadeInfo = TweenInfo.new(
+                math.random(3, 8),
+                Enum.EasingStyle.Sine,
+                Enum.EasingDirection.InOut,
+                -1, true
+            )
+            local fadeTween = TweenService:Create(particle, fadeInfo, {
+                BackgroundTransparency = math.random(10, 90) / 100
+            })
+            fadeTween:Play()
         end
     end
 end
 
--- Bắt đầu animations
-local function startLoadingAnimation()
-    if centerFrame and cloudLogo then
-        animateProgressBar()
-        animateParticles()
-    end
-end
-
--- Function để tắt loading screen
-local function hideLoadingScreen(duration)
-    local hideInfo = TweenInfo.new(duration or 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local hideTween = TweenService:Create(screenGui, hideInfo, {
-        Enabled = false
+-- Animation cho logo glow
+local function animateLogoGlow()
+    local glowInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+    local glowTween = TweenService:Create(logoGlow, glowInfo, {
+        BackgroundTransparency = 0.9,
+        Size = UDim2.new(1.5, 0, 1.5, 0),
+        Position = UDim2.new(-0.25, 0, -0.25, 0)
     })
-    
-    hideTween:Play()
-    
-    hideTween.Completed:Connect(function()
-        if loadingConnection then
-            loadingConnection:Disconnect()
-            loadingConnection = nil
-        end
-        if screenGui and screenGui.Parent then
-            screenGui:Destroy()
-        end
-    end)
+    glowTween:Play()
 end
 
--- Bắt đầu animation
-startLoadingAnimation()
-
--- Animation sequence trong 5 giây
+-- MAIN ANIMATION SEQUENCE (5 giây)
 local function startLoadingSequence()
+    -- Bắt đầu particle ngay lập tức
+    animateParticles()
+    
     -- Logo xuất hiện (0-1 giây)
     cloudLogo.Size = UDim2.new(0, 0, 0, 0)
-    cloudLogo.Rotation = -180
-    
+    cloudLogo.Rotation = -90
     local logoAppearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     local logoAppearTween = TweenService:Create(cloudLogo, logoAppearInfo, {
-        Size = UDim2.new(0, 160, 0, 100),
+        Size = UDim2.new(0, 180, 0, 110),
         Rotation = 0
     })
     logoAppearTween:Play()
+    animateLogoGlow()
     
-    -- Chữ xuất hiện và xoay biến mất từ trái qua phải (1-4 giây)
-    local letterDelay = 3 / #letters -- Chia đều 3 giây cho tất cả chữ
+    wait(1)
     
+    -- Typewriter effect cho chữ (1-3.5 giây)
+    local letterDelay = 2.5 / #letters
     for i, letter in ipairs(letters) do
+        -- Scale animation khi xuất hiện
+        letter.Size = letter.Size * 0.1
         letter.TextTransparency = 1
-        letter.Rotation = -90
+        letter.Position = letter.Position + UDim2.new(0, 0, 0, -20)
         
-        -- Xuất hiện
-        local appearInfo = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        -- Xuất hiện với bounce effect
+        local appearInfo = TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         local appearTween = TweenService:Create(letter, appearInfo, {
             TextTransparency = 0,
-            Rotation = 0
+            BackgroundTransparency = 0,
+            Size = letter.Size * 10,
+            Position = letter.Position - UDim2.new(0, 0, 0, -20)
         })
+        appearTween:Play()
         
-        -- Biến mất với xoay
+        -- Floating effect
+        local floatInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+        local floatTween = TweenService:Create(letter, floatInfo, {
+            Position = letter.Position + UDim2.new(0, 0, 0, -5)
+        })
+        floatTween:Play()
+        
+        wait(letterDelay)
+    end
+    
+    wait(0.5)
+    
+    -- Biến mất từ trái qua phải (3.5-5 giây)
+    local disappearDelay = 1 / #letters
+    for i, letter in ipairs(letters) do
+        -- Glow effect trước khi biến mất
+        local glowInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local glowTween = TweenService:Create(letter:FindFirstChild("UIStroke"), glowInfo, {
+            Thickness = 8,
+            Transparency = 0
+        })
+        glowTween:Play()
+        
+        wait(0.1)
+        
+        -- Biến mất với hiệu ứng đẹp
         local disappearInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
         local disappearTween = TweenService:Create(letter, disappearInfo, {
             TextTransparency = 1,
-            Rotation = 90,
-            Size = UDim2.new(0, letterWidth * 0.5, 1, 0)
+            BackgroundTransparency = 1,
+            Size = letter.Size * 0.1,
+            Position = letter.Position + UDim2.new(0, 0, 0, 30),
+            Rotation = math.random(-180, 180)
         })
-        
-        -- Delay cho từng chữ
-        wait(letterDelay * (i-1) + 1) -- +1 giây cho logo xuất hiện
-        appearTween:Play()
-        
-        wait(0.8) -- Hiển thị chữ một lúc
         disappearTween:Play()
+        
+        wait(disappearDelay)
     end
     
-    -- Logo biến mất (4-5 giây)
-    wait(0.5)
-    local logoDisappearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    -- Logo biến mất
+    local logoDisappearInfo = TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.In)
     local logoDisappearTween = TweenService:Create(cloudLogo, logoDisappearInfo, {
         Size = UDim2.new(0, 0, 0, 0),
-        Rotation = 180
+        Rotation = 90,
+        Position = cloudLogo.Position + UDim2.new(0, 0, 0, -50)
     })
     logoDisappearTween:Play()
     
-    -- Ẩn toàn bộ loading screen
-    wait(1)
-    hideLoadingScreen(0.5)
+    -- Fade out toàn bộ màn hình
+    wait(0.3)
+    local fadeInfo = TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local fadeTween = TweenService:Create(screenGui, fadeInfo, {
+        Enabled = false
+    })
+    fadeTween:Play()
+    
+    fadeTween.Completed:Connect(function()
+        screenGui:Destroy()
+    end)
 end
 
--- Khởi động sequence
+-- Khởi động loading sequence
 startLoadingSequence()
 
--- Export function để có thể gọi từ script khác
-_G.hideLoadingScreen = hideLoadingScreen
-
-print("Sky-Base-Maker Loading Animation đã được khởi tạo!")
+print("Sky-Base-Maker Loading Animation với hiệu ứng MOONDIETY đã khởi tạo!")
