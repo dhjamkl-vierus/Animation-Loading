@@ -1,5 +1,4 @@
 -- Sky-Base-Maker Loading Animation Script for Roblox
--- Theo phong cách MOONDIETY với tất cả hiệu ứng đẹp
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -8,31 +7,31 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Tạo ScreenGui chính
+-- 🖼️ Tạo ScreenGui chính
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "SkyBaseLoadingGui"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Background sử dụng hình ảnh logo làm nền với độ trong suốt 0.3
+-- 🌌 Background sử dụng logo + gradient
 local backgroundFrame = Instance.new("ImageLabel")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
 backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
 backgroundFrame.BorderSizePixel = 0
 backgroundFrame.BackgroundTransparency = 1
-backgroundFrame.Image = "rbxassetid://125022786287705" -- Sử dụng ID logo làm nền
+backgroundFrame.Image = "rbxassetid://125022786287705" -- Logo làm nền
 backgroundFrame.ImageTransparency = 0.3 -- Độ trong suốt 0.3
 backgroundFrame.ScaleType = Enum.ScaleType.Tile
 backgroundFrame.TileSize = UDim2.new(0, 200, 0, 200)
 backgroundFrame.Parent = screenGui
 
--- Gradient overlay cho nền để tạo hiệu ứng đẹp hơn
+-- ✨ Gradient overlay cho nền chính
 local backgroundOverlay = Instance.new("Frame")
 backgroundOverlay.Size = UDim2.new(1, 0, 1, 0)
 backgroundOverlay.Position = UDim2.new(0, 0, 0, 0)
-backgroundOverlay.BackgroundTransparency = 0.5
+backgroundOverlay.BackgroundTransparency = 1 -- 🔹 trong suốt, chỉ giữ gradient
 backgroundOverlay.BorderSizePixel = 0
 backgroundOverlay.Parent = backgroundFrame
 
@@ -47,7 +46,7 @@ backgroundGradient.Color = ColorSequence.new{
 backgroundGradient.Rotation = 45
 backgroundGradient.Parent = backgroundOverlay
 
--- Container chính giữa màn hình
+-- 📦 Container chính giữa màn hình
 local centerFrame = Instance.new("Frame")
 centerFrame.Name = "CenterContent"
 centerFrame.Size = UDim2.new(0, 500, 0, 400)
@@ -55,44 +54,25 @@ centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 centerFrame.BackgroundTransparency = 1
 centerFrame.Parent = screenGui
 
--- LOGO ĐÁM MÂY KHÔNG CÓ NỀN - KÍCH THƯỚC 70
+-- ☁️ Logo đám mây (70x70, không nền phụ)
 local cloudLogo = Instance.new("ImageLabel")
 cloudLogo.Name = "CloudLogo"
 cloudLogo.Size = UDim2.new(0, 70, 0, 70)
 cloudLogo.Position = UDim2.new(0.5, -35, 0, 40)
 cloudLogo.BackgroundTransparency = 1
-cloudLogo.Image = "rbxassetid://125022786287705" -- Cloud gradient image từ user
+cloudLogo.Image = "rbxassetid://125022786287705"
 cloudLogo.ImageColor3 = Color3.fromRGB(255, 255, 255)
 cloudLogo.ScaleType = Enum.ScaleType.Fit
 cloudLogo.Parent = centerFrame
 
--- Container cho hiệu ứng gradient trên logo
+-- 🔮 Container hiệu ứng glow cho logo
 local logoContainer = Instance.new("Frame")
 logoContainer.Size = UDim2.new(1, 0, 1, 0)
 logoContainer.Position = UDim2.new(0, 0, 0, 0)
 logoContainer.BackgroundTransparency = 1
 logoContainer.Parent = cloudLogo
 
--- Tạo gradient overlay cho logo
-local gradientOverlay = Instance.new("Frame")
-gradientOverlay.Size = UDim2.new(1, 0, 1, 0)
-gradientOverlay.Position = UDim2.new(0, 0, 0, 0)
-gradientOverlay.BackgroundTransparency = 0.3
-gradientOverlay.BorderSizePixel = 0
-gradientOverlay.ZIndex = cloudLogo.ZIndex + 1
-gradientOverlay.Parent = logoContainer
-
-local logoGradient = Instance.new("UIGradient")
-logoGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
-    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(64, 150, 255)), -- Light Blue
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(138, 43, 226)), -- Purple
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 20, 147))    -- Pink
-}
-logoGradient.Rotation = 45
-logoGradient.Parent = gradientOverlay
-
--- Hiệu ứng glow cho logo
+-- 💡 Hiệu ứng glow cho logo
 local logoGlow = Instance.new("ImageLabel")
 logoGlow.Size = UDim2.new(1.4, 0, 1.4, 0)
 logoGlow.Position = UDim2.new(-0.2, 0, -0.2, 0)
