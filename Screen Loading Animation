@@ -1,473 +1,347 @@
--- ======= LOADING ANIMATION (5 SECONDS) =======
-local StarterGui = game:GetService("StarterGui")
-local Lighting = game:GetService("Lighting")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
+-- Sky-Base-Maker Loading Animation Script for Roblox
+-- Sử dụng local, if, then như yêu cầu
+
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
--- Tạo màn hình loading
-local LocalPlayer = Players.LocalPlayer
-local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
-local loadingGui = Instance.new("ScreenGui")
-loadingGui.Name = "LoadingGui"
-loadingGui.ResetOnSpawn = false
-loadingGui.Parent = playerGui
-
-local loadingFrame = Instance.new("Frame")
-loadingFrame.Size = UDim2.new(1, 0, 1, 0)
-loadingFrame.Position = UDim2.new(0, 0, 0, 0)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
-loadingFrame.BorderSizePixel = 0
-loadingFrame.ZIndex = 100
-loadingFrame.Parent = loadingGui
-
-local loadingText = Instance.new("TextLabel")
-loadingText.Size = UDim2.new(0, 400, 0, 100)
-loadingText.Position = UDim2.new(0.5, -200, 0.4, -50)
-loadingText.Text = "SKY BASE MAKER"
-loadingText.TextColor3 = Color3.fromRGB(200, 220, 255)
-loadingText.TextScaled = true
-loadingText.Font = Enum.Font.GothamBlack
-loadingText.BackgroundTransparency = 1
-loadingText.ZIndex = 101
-loadingText.Parent = loadingFrame
-
-local subText = Instance.new("TextLabel")
-subText.Size = UDim2.new(0, 300, 0, 40)
-subText.Position = UDim2.new(0.5, -150, 0.5, 0)
-subText.Text = "by MidoriMidoru_73816"
-subText.TextColor3 = Color3.fromRGB(180, 200, 230)
-subText.TextScaled = true
-subText.Font = Enum.Font.Gotham
-subText.BackgroundTransparency = 1
-subText.ZIndex = 101
-subText.Parent = loadingFrame
-
--- Animation loading (5 giây)
-spawn(function()
-    wait(5) -- Chờ 5 giây như yêu cầu
-    
-    local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    
-    -- Fade in
-    local textTween = TweenService:Create(loadingText, tweenInfo, {TextTransparency = 0})
-    local subTextTween = TweenService:Create(subText, tweenInfo, {TextTransparency = 0})
-    textTween:Play()
-    subTextTween:Play()
-    
-    wait(2)
-    
-    -- Fade out
-    local fadeOut = TweenService:Create(loadingFrame, TweenInfo.new(1.5), {BackgroundTransparency = 1})
-    local textFadeOut = TweenService:Create(loadingText, TweenInfo.new(1.5), {TextTransparency = 1})
-    local subTextFadeOut = TweenService:Create(subText, TweenInfo.new(1.5), {TextTransparency = 1})
-    
-    fadeOut:Play()
-    textFadeOut:Play()
-    subTextFadeOut:Play()
-    
-    fadeOut.Completed:Connect(function()
-        loadingGui:Destroy()
-    end)
-end)
-
--- ======= ORIGINAL FUNCTIONALITY WITH ENHANCED GUI =======
-StarterGui:SetCore("SendNotification", { 
-    Title = "loading...", 
-    Text = "made by MidoriMidoru_73816", 
-    Duration = 5 
-})
-
-local function clearFog() 
-    Lighting.FogStart = 0 
-    Lighting.FogEnd = 1e9 
-end
-
-local function neuterAtmosphere(a) 
-    if a and a:IsA("Atmosphere") then 
-        a.Density = 0 
-        pcall(function() a.Haze = 0 end) 
-        pcall(function() a.Glare = 0 end) 
-        a:GetPropertyChangedSignal("Density"):Connect(function() a.Density = 0 end) 
-        pcall(function() a:GetPropertyChangedSignal("Haze"):Connect(function() a.Haze = 0 end) end) 
-        pcall(function() a:GetPropertyChangedSignal("Glare"):Connect(function() a.Glare = 0 end) end) 
-    end 
-end
-
-clearFog() 
-for _, child in ipairs(Lighting:GetChildren()) do 
-    neuterAtmosphere(child) 
-end
-
-Lighting.ChildAdded:Connect(neuterAtmosphere) 
-Lighting:GetPropertyChangedSignal("FogStart"):Connect(clearFog) 
-Lighting:GetPropertyChangedSignal("FogEnd"):Connect(clearFog)
-
+-- Tạo ScreenGui chính
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "HeightAdjusterGui"
-screenGui.ResetOnSpawn = false
+screenGui.Name = "SkyBaseLoadingGui"
 screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Modern frame design
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 220)  -- Increased size for new buttons
-frame.Position = UDim2.new(0.5, -160, 0.1, 0)
-frame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Parent = screenGui
+-- Background Frame với gradient sky tối
+local backgroundFrame = Instance.new("Frame")
+backgroundFrame.Name = "Background"
+backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
+backgroundFrame.BorderSizePixel = 0
+backgroundFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 15) -- Dark background như trong ảnh
+backgroundFrame.Parent = screenGui
 
--- Add rounded corners
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = frame
+-- Frame chứa các hiệu ứng hạt
+local particleFrame = Instance.new("Frame")
+particleFrame.Name = "ParticleContainer"
+particleFrame.Size = UDim2.new(1, 0, 1, 0)
+particleFrame.Position = UDim2.new(0, 0, 0, 0)
+particleFrame.BackgroundTransparency = 1
+particleFrame.Parent = screenGui
 
--- Add subtle shadow effect
-local shadow = Instance.new("UIStroke")
-shadow.Color = Color3.fromRGB(80, 80, 90)
-shadow.Thickness = 2
-shadow.Parent = frame
+-- Frame trung tâm chứa logo và text
+local centerFrame = Instance.new("Frame")
+centerFrame.Name = "CenterContent"
+centerFrame.Size = UDim2.new(0, 400, 0, 300)
+centerFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+centerFrame.BackgroundTransparency = 1
+centerFrame.Parent = screenGui
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "SKY BASE MAKER v2.0"
-title.TextColor3 = Color3.fromRGB(220, 220, 220)
-title.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 14
-title.Parent = frame
+-- Tạo logo đám mây gradient như trong ảnh
+local cloudLogo = Instance.new("Frame")
+cloudLogo.Name = "CloudLogo"
+cloudLogo.Size = UDim2.new(0, 160, 0, 100)
+cloudLogo.Position = UDim2.new(0.5, -80, 0, 10)
+cloudLogo.BackgroundTransparency = 1
+cloudLogo.Parent = centerFrame
 
--- Add rounded corners to title
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 8)
-titleCorner.Parent = title
+-- Tạo đám mây chính với gradient cyan -> blue -> purple -> pink
+local mainCloud = Instance.new("Frame")
+mainCloud.Size = UDim2.new(0, 140, 0, 70)
+mainCloud.Position = UDim2.new(0.5, -70, 0.5, -35)
+mainCloud.BorderSizePixel = 0
+mainCloud.Parent = cloudLogo
 
-local sliderFrame = Instance.new("Frame")
-sliderFrame.Size = UDim2.new(1, -20, 0, 40)
-sliderFrame.Position = UDim2.new(0, 10, 0, 40)
-sliderFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-sliderFrame.BorderSizePixel = 0
-sliderFrame.Parent = frame
+-- UICorner cho đám mây
+local cloudCorner = Instance.new("UICorner")
+cloudCorner.CornerRadius = UDim.new(0.5, 0)
+cloudCorner.Parent = mainCloud
 
-local sliderBar = Instance.new("Frame")
-sliderBar.Size = UDim2.new(1, -20, 0, 10)
-sliderBar.Position = UDim2.new(0, 10, 0.5, -5)
-sliderBar.BackgroundColor3 = Color3.fromRGB(100, 100, 110)
-sliderBar.BorderSizePixel = 0
-sliderBar.Parent = sliderFrame
+-- Gradient giống như trong ảnh
+local cloudGradient = Instance.new("UIGradient")
+cloudGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(0, 150, 255)),  -- Blue
+    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(150, 100, 255)), -- Purple
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 150))   -- Pink
+}
+cloudGradient.Rotation = 45
+cloudGradient.Parent = mainCloud
 
-local sliderButton = Instance.new("TextButton")
-sliderButton.Size = UDim2.new(0, 20, 0, 20)
-sliderButton.Position = UDim2.new(0, 0, 0.5, -10)
-sliderButton.Text = ""
-sliderButton.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
-sliderButton.Parent = sliderFrame
+-- Các đám mây nhỏ bổ sung
+local smallCloud1 = Instance.new("Frame")
+smallCloud1.Size = UDim2.new(0, 50, 0, 35)
+smallCloud1.Position = UDim2.new(0, 20, 0, 10)
+smallCloud1.BorderSizePixel = 0
+smallCloud1.Parent = cloudLogo
 
--- Height value display
-local valueDisplay = Instance.new("TextLabel")
-valueDisplay.Size = UDim2.new(0, 40, 0, 20)
-valueDisplay.Position = UDim2.new(1, -45, 0.5, -10)
-valueDisplay.Text = "0"
-valueDisplay.TextColor3 = Color3.fromRGB(220, 220, 220)
-valueDisplay.BackgroundTransparency = 1
-valueDisplay.Font = Enum.Font.GothamBold
-valueDisplay.TextSize = 14
-valueDisplay.Parent = sliderFrame
+local corner1 = Instance.new("UICorner")
+corner1.CornerRadius = UDim.new(0.5, 0)
+corner1.Parent = smallCloud1
 
--- NEW: Height input box
-local inputFrame = Instance.new("Frame")
-inputFrame.Size = UDim2.new(1, -20, 0, 30)
-inputFrame.Position = UDim2.new(0, 10, 0, 90)
-inputFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-inputFrame.BorderSizePixel = 0
-inputFrame.Parent = frame
+local grad1 = Instance.new("UIGradient")
+grad1.Color = cloudGradient.Color
+grad1.Rotation = 45
+grad1.Parent = smallCloud1
 
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 6)
-inputCorner.Parent = inputFrame
+local smallCloud2 = Instance.new("Frame")
+smallCloud2.Size = UDim2.new(0, 45, 0, 30)
+smallCloud2.Position = UDim2.new(0, 95, 0, 15)
+smallCloud2.BorderSizePixel = 0
+smallCloud2.Parent = cloudLogo
 
-local heightInput = Instance.new("TextBox")
-heightInput.Size = UDim2.new(0.4, -5, 1, 0)
-heightInput.Position = UDim2.new(0, 5, 0, 0)
-heightInput.Text = "0"
-heightInput.PlaceholderText = "1-100"
-heightInput.TextColor3 = Color3.fromRGB(220, 220, 220)
-heightInput.BackgroundTransparency = 1
-heightInput.Font = Enum.Font.Gotham
-heightInput.TextSize = 14
-heightInput.Parent = inputFrame
+local corner2 = Instance.new("UICorner")
+corner2.CornerRadius = UDim.new(0.5, 0)
+corner2.Parent = smallCloud2
 
--- NEW: + and - buttons
-local minusButton = Instance.new("TextButton")
-minusButton.Size = UDim2.new(0, 30, 1, 0)
-minusButton.Position = UDim2.new(0.4, 5, 0, 0)
-minusButton.Text = "-"
-minusButton.TextColor3 = Color3.fromRGB(220, 220, 220)
-minusButton.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
-minusButton.Font = Enum.Font.GothamBold
-minusButton.TextSize = 18
-minusButton.Parent = inputFrame
+local grad2 = Instance.new("UIGradient")
+grad2.Color = cloudGradient.Color
+grad2.Rotation = 45
+grad2.Parent = smallCloud2
 
-local plusButton = Instance.new("TextButton")
-plusButton.Size = UDim2.new(0, 30, 1, 0)
-plusButton.Position = UDim2.new(0.4, 40, 0, 0)
-plusButton.Text = "+"
-plusButton.TextColor3 = Color3.fromRGB(220, 220, 220)
-plusButton.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
-plusButton.Font = Enum.Font.GothamBold
-plusButton.TextSize = 18
-plusButton.Parent = inputFrame
+-- Container cho từng chữ cái
+local textContainer = Instance.new("Frame")
+textContainer.Name = "TextContainer"
+textContainer.Size = UDim2.new(1, 0, 0, 60)
+textContainer.Position = UDim2.new(0, 0, 0, 130)
+textContainer.BackgroundTransparency = 1
+textContainer.Parent = centerFrame
 
-local inputLabel = Instance.new("TextLabel")
-inputLabel.Size = UDim2.new(0.2, -5, 1, 0)
-inputLabel.Position = UDim2.new(0.4, 75, 0, 0)
-inputLabel.Text = "Height"
-inputLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-inputLabel.BackgroundTransparency = 1
-inputLabel.Font = Enum.Font.Gotham
-inputLabel.TextSize = 14
-inputLabel.TextXAlignment = Enum.TextXAlignment.Left
-inputLabel.Parent = inputFrame
+-- Tạo từng chữ cái riêng biệt
+local text = "SKY-BASE-MAKER"
+local letters = {}
+local letterWidth = 400 / #text
 
-local addButton = Instance.new("TextButton")
-addButton.Size = UDim2.new(0.45, -5, 0, 30)
-addButton.Position = UDim2.new(0, 10, 0, 130)
-addButton.Text = "⚓️ ADD"
-addButton.TextColor3 = Color3.fromRGB(240, 240, 240)
-addButton.BackgroundColor3 = Color3.fromRGB(70, 150, 70)
-addButton.Font = Enum.Font.GothamBold
-addButton.TextSize = 14
-addButton.Parent = frame
-
-local addCorner = Instance.new("UICorner")
-addCorner.CornerRadius = UDim.new(0, 6)
-addCorner.Parent = addButton
-
-local removeButton = Instance.new("TextButton")
-removeButton.Size = UDim2.new(0.45, -5, 0, 30)
-removeButton.Position = UDim2.new(0.55, 0, 0, 130)
-removeButton.Text = "✂️ REMOVE"
-removeButton.TextColor3 = Color3.fromRGB(240, 240, 240)
-removeButton.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
-removeButton.Font = Enum.Font.GothamBold
-removeButton.TextSize = 14
-removeButton.Parent = frame
-
-local removeCorner = Instance.new("UICorner")
-removeCorner.CornerRadius = UDim.new(0, 6)
-removeCorner.Parent = removeButton
-
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0, 100, 0, 30)
-toggleButton.Position = UDim2.new(0, 10, 0, 170)
-toggleButton.Text = "😙 TOGGLE"
-toggleButton.TextColor3 = Color3.fromRGB(240, 240, 240)
-toggleButton.BackgroundColor3 = Color3.fromRGB(80, 100, 180)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.TextSize = 14
-toggleButton.Parent = screenGui
-
-local toggleCorner = Instance.new("UICorner")
-toggleCorner.CornerRadius = UDim.new(0, 6)
-toggleCorner.Parent = toggleButton
-
-local targets = {} 
-local dragging = false 
-local sliderValue = 0 
-local lastCheck = 0
-
--- Kéo GUI bằng tay (giữ nguyên từ script gốc)
-frame.Active = true
-frame.Draggable = true
-
-local function getFootPart() 
-    local character = LocalPlayer.Character 
-    if not character then return nil end 
-    local root = character:FindFirstChild("HumanoidRootPart") 
-    if not root then return nil end 
-    local ray = Ray.new(root.Position, Vector3.new(0, -5, 0)) 
-    local part = workspace:FindPartOnRay(ray, character) 
-    return part 
-end
-
-local function ensureHighlight(part) 
-    if not part or not part:IsA("BasePart") then return end 
-    local highlight = part:FindFirstChild("PersistentHighlight") 
-    if not highlight then 
-        highlight = Instance.new("Highlight") 
-        highlight.Name = "PersistentHighlight" 
-        highlight.Adornee = part 
-        highlight.FillColor = Color3.fromRGB(220, 220, 220)
-        highlight.FillTransparency = 0.4
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) 
-        highlight.OutlineTransparency = 0 
-        highlight.Parent = part 
-    end 
-end
-
-local function removeHighlight(part) 
-    local highlight = part and part:FindFirstChild("PersistentHighlight") 
-    if highlight then 
-        highlight:Destroy() 
-    end 
-end
-
-local function updateSlider(inputX) 
-    local barPos = sliderBar.AbsolutePosition.X 
-    local barSize = sliderBar.AbsoluteSize.X 
-    local relativeX = math.clamp(inputX - barPos, 0, barSize) 
-    sliderButton.Position = UDim2.new(0, relativeX - 10, 0.5, -10) 
-    sliderValue = math.floor((relativeX / barSize) * 100) 
-    valueDisplay.Text = tostring(sliderValue)
-    heightInput.Text = tostring(sliderValue)
+for i = 1, #text do
+    local letter = Instance.new("TextLabel")
+    letter.Name = "Letter" .. i
+    letter.Size = UDim2.new(0, letterWidth, 1, 0)
+    letter.Position = UDim2.new(0, (i-1) * letterWidth, 0, 0)
+    letter.BackgroundTransparency = 1
+    letter.Text = string.sub(text, i, i)
+    letter.TextSize = 30
+    letter.TextScaled = true
+    letter.Font = Enum.Font.LuckiestGuy
+    letter.Parent = textContainer
     
-    for part, _ in pairs(targets) do 
-        if part and part:IsA("BasePart") then 
-            part.Size = Vector3.new(part.Size.X, sliderValue, part.Size.Z) 
-        end 
-    end 
+    -- Gradient cho chữ giống như logo
+    local letterGradient = Instance.new("UIGradient")
+    letterGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 150, 255)), -- Blue-Purple
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 200))   -- Pink
+    }
+    letterGradient.Rotation = 90
+    letterGradient.Parent = letter
+    
+    -- Text stroke cho hiệu ứng đẹp hơn
+    local textStroke = Instance.new("UIStroke")
+    textStroke.Color = Color3.fromRGB(0, 50, 100)
+    textStroke.Thickness = 2
+    textStroke.Parent = letter
+    
+    table.insert(letters, letter)
 end
 
--- NEW: Update from text input
-local function updateFromInput()
-    local num = tonumber(heightInput.Text)
-    if num and num >= 1 and num <= 100 then
-        sliderValue = num
-        valueDisplay.Text = tostring(sliderValue)
-        
-        -- Update slider position
-        local barSize = sliderBar.AbsoluteSize.X
-        if barSize > 0 then
-            local relativeX = (num / 100) * barSize
-            sliderButton.Position = UDim2.new(0, relativeX - 10, 0.5, -10)
+-- Loading progress bar
+local progressFrame = Instance.new("Frame")
+progressFrame.Name = "ProgressFrame"
+progressFrame.Size = UDim2.new(0, 200, 0, 4)
+progressFrame.Position = UDim2.new(0.5, -100, 0, 210)
+progressFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+progressFrame.BorderSizePixel = 0
+progressFrame.Parent = centerFrame
+
+local progressCorner = Instance.new("UICorner")
+progressCorner.CornerRadius = UDim.new(0, 2)
+progressCorner.Parent = progressFrame
+
+local progressBar = Instance.new("Frame")
+progressBar.Name = "ProgressBar"
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.Position = UDim2.new(0, 0, 0, 0)
+progressBar.BorderSizePixel = 0
+progressBar.Parent = progressFrame
+
+local progressGradient = Instance.new("UIGradient")
+progressGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 200))
+}
+progressGradient.Parent = progressBar
+
+local progressBarCorner = Instance.new("UICorner")
+progressBarCorner.CornerRadius = UDim.new(0, 2)
+progressBarCorner.Parent = progressBar
+
+-- Tạo hệ thống hạt hiệu ứng
+local particles = {}
+local particleCount = 50
+
+local function createParticle()
+    local particle = Instance.new("Frame")
+    particle.Size = UDim2.new(0, math.random(2, 6), 0, math.random(2, 6))
+    particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
+    particle.BackgroundColor3 = Color3.fromRGB(
+        math.random(200, 255),
+        math.random(200, 255), 
+        math.random(240, 255)
+    )
+    particle.BorderSizePixel = 0
+    particle.Parent = particleFrame
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.5, 0)
+    corner.Parent = particle
+    
+    return particle
+end
+
+-- Tạo các hạt
+if particleCount > 0 then
+    for i = 1, particleCount do
+        local particle = createParticle()
+        table.insert(particles, particle)
+    end
+end
+
+-- Animation progress bar
+local function animateProgressBar()
+    local progressInfo = TweenInfo.new(5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+    local progressTween = TweenService:Create(progressBar, progressInfo, {
+        Size = UDim2.new(1, 0, 1, 0)
+    })
+    progressTween:Play()
+end
+
+local function animateParticles()
+    if #particles > 0 then
+        for i, particle in ipairs(particles) do
+            if particle and particle.Parent then
+                local moveInfo = TweenInfo.new(
+                    math.random(8, 15), 
+                    Enum.EasingStyle.Linear, 
+                    Enum.EasingDirection.InOut, 
+                    -1
+                )
+                
+                local newPos = UDim2.new(
+                    math.random(), 0,
+                    math.random(), 0
+                )
+                
+                local moveTween = TweenService:Create(particle, moveInfo, {Position = newPos})
+                moveTween:Play()
+                
+                -- Hiệu ứng fade
+                local fadeInfo = TweenInfo.new(
+                    math.random(3, 6),
+                    Enum.EasingStyle.Sine,
+                    Enum.EasingDirection.InOut,
+                    -1, true
+                )
+                local fadeTween = TweenService:Create(particle, fadeInfo, {BackgroundTransparency = 0.7})
+                fadeTween:Play()
+            end
         end
-        
-        -- Update parts
-        for part, _ in pairs(targets) do 
-            if part and part:IsA("BasePart") then 
-                part.Size = Vector3.new(part.Size.X, sliderValue, part.Size.Z) 
-            end 
+    end
+end
+
+-- Bắt đầu animations
+local function startLoadingAnimation()
+    if centerFrame and cloudLogo then
+        animateProgressBar()
+        animateParticles()
+    end
+end
+
+-- Function để tắt loading screen
+local function hideLoadingScreen(duration)
+    local hideInfo = TweenInfo.new(duration or 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local hideTween = TweenService:Create(screenGui, hideInfo, {
+        Enabled = false
+    })
+    
+    hideTween:Play()
+    
+    hideTween.Completed:Connect(function()
+        if loadingConnection then
+            loadingConnection:Disconnect()
+            loadingConnection = nil
         end
-    else
-        heightInput.Text = tostring(sliderValue)
-    end
+        if screenGui and screenGui.Parent then
+            screenGui:Destroy()
+        end
+    end)
 end
 
--- NEW: Button functions for +/-
-local function increaseHeight()
-    local newValue = math.min(sliderValue + 5, 100)
-    sliderValue = newValue
-    valueDisplay.Text = tostring(sliderValue)
-    heightInput.Text = tostring(sliderValue)
+-- Bắt đầu animation
+startLoadingAnimation()
+
+-- Animation sequence trong 5 giây
+local function startLoadingSequence()
+    -- Logo xuất hiện (0-1 giây)
+    cloudLogo.Size = UDim2.new(0, 0, 0, 0)
+    cloudLogo.Rotation = -180
     
-    -- Update slider position
-    local barSize = sliderBar.AbsoluteSize.X
-    if barSize > 0 then
-        local relativeX = (sliderValue / 100) * barSize
-        sliderButton.Position = UDim2.new(0, relativeX - 10, 0.5, -10)
+    local logoAppearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    local logoAppearTween = TweenService:Create(cloudLogo, logoAppearInfo, {
+        Size = UDim2.new(0, 160, 0, 100),
+        Rotation = 0
+    })
+    logoAppearTween:Play()
+    
+    -- Chữ xuất hiện và xoay biến mất từ trái qua phải (1-4 giây)
+    local letterDelay = 3 / #letters -- Chia đều 3 giây cho tất cả chữ
+    
+    for i, letter in ipairs(letters) do
+        letter.TextTransparency = 1
+        letter.Rotation = -90
+        
+        -- Xuất hiện
+        local appearInfo = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        local appearTween = TweenService:Create(letter, appearInfo, {
+            TextTransparency = 0,
+            Rotation = 0
+        })
+        
+        -- Biến mất với xoay
+        local disappearInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        local disappearTween = TweenService:Create(letter, disappearInfo, {
+            TextTransparency = 1,
+            Rotation = 90,
+            Size = UDim2.new(0, letterWidth * 0.5, 1, 0)
+        })
+        
+        -- Delay cho từng chữ
+        wait(letterDelay * (i-1) + 1) -- +1 giây cho logo xuất hiện
+        appearTween:Play()
+        
+        wait(0.8) -- Hiển thị chữ một lúc
+        disappearTween:Play()
     end
     
-    -- Update parts
-    for part, _ in pairs(targets) do 
-        if part and part:IsA("BasePart") then 
-            part.Size = Vector3.new(part.Size.X, sliderValue, part.Size.Z) 
-        end 
-    end
+    -- Logo biến mất (4-5 giây)
+    wait(0.5)
+    local logoDisappearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local logoDisappearTween = TweenService:Create(cloudLogo, logoDisappearInfo, {
+        Size = UDim2.new(0, 0, 0, 0),
+        Rotation = 180
+    })
+    logoDisappearTween:Play()
+    
+    -- Ẩn toàn bộ loading screen
+    wait(1)
+    hideLoadingScreen(0.5)
 end
 
-local function decreaseHeight()
-    local newValue = math.max(sliderValue - 5, 1)
-    sliderValue = newValue
-    valueDisplay.Text = tostring(sliderValue)
-    heightInput.Text = tostring(sliderValue)
-    
-    -- Update slider position
-    local barSize = sliderBar.AbsoluteSize.X
-    if barSize > 0 then
-        local relativeX = (sliderValue / 100) * barSize
-        sliderButton.Position = UDim2.new(0, relativeX - 10, 0.5, -10)
-    end
-    
-    -- Update parts
-    for part, _ in pairs(targets) do 
-        if part and part:IsA("BasePart") then 
-            part.Size = Vector3.new(part.Size.X, sliderValue, part.Size.Z) 
-        end 
-    end
-end
+-- Khởi động sequence
+startLoadingSequence()
 
-sliderButton.InputBegan:Connect(function(input) 
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        dragging = true 
-    end 
-end)
+-- Export function để có thể gọi từ script khác
+_G.hideLoadingScreen = hideLoadingScreen
 
-UserInputService.InputEnded:Connect(function(input) 
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        dragging = false 
-    end 
-end)
-
-UserInputService.InputChanged:Connect(function(input) 
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then 
-        updateSlider(input.Position.X) 
-    end 
-end)
-
-sliderBar.InputBegan:Connect(function(input) 
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        updateSlider(input.Position.X) 
-    end 
-end)
-
--- NEW: Text input event
-heightInput.FocusLost:Connect(function()
-    updateFromInput()
-end)
-
--- NEW: + and - button events
-plusButton.MouseButton1Click:Connect(function()
-    increaseHeight()
-end)
-
-minusButton.MouseButton1Click:Connect(function()
-    decreaseHeight()
-end)
-
-addButton.MouseButton1Click:Connect(function() 
-    local part = getFootPart() 
-    if part and not targets[part] then 
-        if part.Size.X > 35 and part.Size.Z > 35 then 
-            targets[part] = true 
-            ensureHighlight(part) 
-        end 
-    end 
-end)
-
-removeButton.MouseButton1Click:Connect(function() 
-    local part = getFootPart() 
-    if part and targets[part] then 
-        targets[part] = nil 
-        removeHighlight(part) 
-    end 
-end)
-
-toggleButton.MouseButton1Click:Connect(function() 
-    frame.Visible = not frame.Visible 
-    toggleButton.Text = frame.Visible and "😙 HIDE" or "😗 SHOW" 
-end)
-
-RunService.RenderStepped:Connect(function() 
-    if tick() - lastCheck >= 2 then 
-        lastCheck = tick() 
-        for part, _ in pairs(targets) do 
-            if part and part:IsA("BasePart") then 
-                if not part:FindFirstChild("PersistentHighlight") then 
-                    ensureHighlight(part) 
-                end 
-            end 
-        end 
-    end 
-end)
+print("Sky-Base-Maker Loading Animation đã được khởi tạo!")
