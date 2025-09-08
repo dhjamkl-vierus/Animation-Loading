@@ -16,12 +16,30 @@ screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Background với logo animation làm nền
-local backgroundFrame = Instance.new("ImageLabel")
+local backgroundFrame = Instance.new("frame")
 backgroundFrame.Name = "Background"
 backgroundFrame.Size = UDim2.new(1, 0, 1, 0)
 backgroundFrame.Position = UDim2.new(0, 0, 0, 0)
 backgroundFrame.BorderSizePixel = 0
 backgroundFrame.BackgroundTransparency = 1
+
+local backgroundFrame = Instance.new("Frame")
+gradientOverlay.Size = UDim2.new(1, 0, 1, 0)
+gradientOverlay.Position = UDim2.new(0, 0, 0, 0)
+gradientOverlay.BackgroundTransparency = 0.3
+gradientOverlay.BorderSizePixel = 0
+gradientOverlay.ZIndex = cloudLogo.ZIndex + 1
+gradientOverlay.Parent = logoContainer
+
+local logoGradient = Instance.new("UIGradient")
+logoGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(64, 150, 255)), -- Light Blue
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(138, 43, 226)), -- Purple
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 20, 147))    -- Pink
+}
+logoGradient.Rotation = 45
+logoGradient.Parent = gradientOverlay
 
 -- Gradient overlay cho nền để tạo hiệu ứng đẹp hơn
 local backgroundOverlay = Instance.new("Frame")
