@@ -42,77 +42,54 @@ centerFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 centerFrame.BackgroundTransparency = 1
 centerFrame.Parent = screenGui
 
--- LOGO ĐÁM MÂY GRADIENT
-local cloudLogo = Instance.new("Frame")
+-- LOGO ĐÁM MÂY SỬ DỤNG HÌNH ẢNH
+local cloudLogo = Instance.new("ImageLabel")
 cloudLogo.Name = "CloudLogo"
-cloudLogo.Size = UDim2.new(0, 180, 0, 110)
-cloudLogo.Position = UDim2.new(0.5, -90, 0, 50)
+cloudLogo.Size = UDim2.new(0, 200, 0, 130)
+cloudLogo.Position = UDim2.new(0.5, -100, 0, 40)
 cloudLogo.BackgroundTransparency = 1
+cloudLogo.Image = "rbxassetid://125022786287705" -- Cloud gradient image từ user
+cloudLogo.ImageColor3 = Color3.fromRGB(255, 255, 255)
+cloudLogo.ScaleType = Enum.ScaleType.Fit
 cloudLogo.Parent = centerFrame
 
--- Đám mây chính với gradient đẹp
-local mainCloud = Instance.new("Frame")
-mainCloud.Size = UDim2.new(0, 160, 0, 80)
-mainCloud.Position = UDim2.new(0.5, -80, 0.5, -40)
-mainCloud.BorderSizePixel = 0
-mainCloud.Parent = cloudLogo
+-- Container cho hiệu ứng gradient trên logo
+local logoContainer = Instance.new("Frame")
+logoContainer.Size = UDim2.new(1, 0, 1, 0)
+logoContainer.Position = UDim2.new(0, 0, 0, 0)
+logoContainer.BackgroundTransparency = 1
+logoContainer.Parent = cloudLogo
 
-local cloudCorner = Instance.new("UICorner")
-cloudCorner.CornerRadius = UDim.new(0.5, 0)
-cloudCorner.Parent = mainCloud
+-- Tạo gradient overlay cho logo
+local gradientOverlay = Instance.new("Frame")
+gradientOverlay.Size = UDim2.new(1, 0, 1, 0)
+gradientOverlay.Position = UDim2.new(0, 0, 0, 0)
+gradientOverlay.BackgroundTransparency = 0.3
+gradientOverlay.BorderSizePixel = 0
+gradientOverlay.ZIndex = cloudLogo.ZIndex + 1
+gradientOverlay.Parent = logoContainer
 
-local cloudGradient = Instance.new("UIGradient")
-cloudGradient.Color = ColorSequence.new{
+local logoGradient = Instance.new("UIGradient")
+logoGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),    -- Cyan
-    ColorSequenceKeypoint.new(0.25, Color3.fromRGB(64, 224, 255)), -- Light Blue
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(138, 43, 226)),  -- Blue Violet
-    ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 20, 147)), -- Deep Pink
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 105, 180))    -- Hot Pink
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(64, 150, 255)), -- Light Blue
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(138, 43, 226)), -- Purple
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 20, 147))    -- Pink
 }
-cloudGradient.Rotation = 135
-cloudGradient.Parent = mainCloud
-
--- Đám mây nhỏ bên trái
-local leftCloud = Instance.new("Frame")
-leftCloud.Size = UDim2.new(0, 60, 0, 45)
-leftCloud.Position = UDim2.new(0, 15, 0, 25)
-leftCloud.BorderSizePixel = 0
-leftCloud.Parent = cloudLogo
-
-local leftCorner = Instance.new("UICorner")
-leftCorner.CornerRadius = UDim.new(0.5, 0)
-leftCorner.Parent = leftCloud
-
-local leftGradient = cloudGradient:Clone()
-leftGradient.Parent = leftCloud
-
--- Đám mây nhỏ bên phải
-local rightCloud = Instance.new("Frame")
-rightCloud.Size = UDim2.new(0, 55, 0, 40)
-rightCloud.Position = UDim2.new(0, 110, 0, 30)
-rightCloud.BorderSizePixel = 0
-rightCloud.Parent = cloudLogo
-
-local rightCorner = Instance.new("UICorner")
-rightCorner.CornerRadius = UDim.new(0.5, 0)
-rightCorner.Parent = rightCloud
-
-local rightGradient = cloudGradient:Clone()
-rightGradient.Parent = rightCloud
+logoGradient.Rotation = 45
+logoGradient.Parent = gradientOverlay
 
 -- Hiệu ứng glow cho logo
-local logoGlow = Instance.new("Frame")
-logoGlow.Size = UDim2.new(1.3, 0, 1.3, 0)
-logoGlow.Position = UDim2.new(-0.15, 0, -0.15, 0)
-logoGlow.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-logoGlow.BackgroundTransparency = 0.7
-logoGlow.BorderSizePixel = 0
-logoGlow.ZIndex = mainCloud.ZIndex - 1
-logoGlow.Parent = cloudLogo
-
-local glowCorner = Instance.new("UICorner")
-glowCorner.CornerRadius = UDim.new(0.5, 0)
-glowCorner.Parent = logoGlow
+local logoGlow = Instance.new("ImageLabel")
+logoGlow.Size = UDim2.new(1.4, 0, 1.4, 0)
+logoGlow.Position = UDim2.new(-0.2, 0, -0.2, 0)
+logoGlow.BackgroundTransparency = 1
+logoGlow.Image = "rbxassetid://125022786287705"
+logoGlow.ImageColor3 = Color3.fromRGB(0, 255, 255)
+logoGlow.ImageTransparency = 0.8
+logoGlow.ScaleType = Enum.ScaleType.Fit
+logoGlow.ZIndex = cloudLogo.ZIndex - 1
+logoGlow.Parent = logoContainer
 
 -- CHỮ VỚI FONT LUCKIESTGUY VÀ HIỆU ỨNG
 local textContainer = Instance.new("Frame")
@@ -250,11 +227,18 @@ end
 local function animateLogoGlow()
     local glowInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
     local glowTween = TweenService:Create(logoGlow, glowInfo, {
-        BackgroundTransparency = 0.9,
-        Size = UDim2.new(1.5, 0, 1.5, 0),
-        Position = UDim2.new(-0.25, 0, -0.25, 0)
+        ImageTransparency = 0.9,
+        Size = UDim2.new(1.6, 0, 1.6, 0),
+        Position = UDim2.new(-0.3, 0, -0.3, 0)
     })
     glowTween:Play()
+    
+    -- Animation cho gradient overlay
+    local gradientInfo = TweenInfo.new(3, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1)
+    local gradientTween = TweenService:Create(logoGradient, gradientInfo, {
+        Rotation = logoGradient.Rotation + 360
+    })
+    gradientTween:Play()
 end
 
 -- MAIN ANIMATION SEQUENCE (5 giây)
@@ -265,10 +249,12 @@ local function startLoadingSequence()
     -- Logo xuất hiện (0-1 giây)
     cloudLogo.Size = UDim2.new(0, 0, 0, 0)
     cloudLogo.Rotation = -90
+    cloudLogo.ImageTransparency = 1
     local logoAppearInfo = TweenInfo.new(1, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     local logoAppearTween = TweenService:Create(cloudLogo, logoAppearInfo, {
-        Size = UDim2.new(0, 180, 0, 110),
-        Rotation = 0
+        Size = UDim2.new(0, 200, 0, 130),
+        Rotation = 0,
+        ImageTransparency = 0
     })
     logoAppearTween:Play()
     animateLogoGlow()
@@ -337,6 +323,7 @@ local function startLoadingSequence()
     local logoDisappearTween = TweenService:Create(cloudLogo, logoDisappearInfo, {
         Size = UDim2.new(0, 0, 0, 0),
         Rotation = 90,
+        ImageTransparency = 1,
         Position = cloudLogo.Position + UDim2.new(0, 0, 0, -50)
     })
     logoDisappearTween:Play()
